@@ -1,0 +1,25 @@
+server:
+  port: 18080
+spring:
+  application:
+    name: dahua-test-graph
+  ai:
+    openai:
+      base-url: https://localhost:11434
+      api-key: ollama
+      chat:
+        options:
+          model: qwen3:8b
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      # 应用健康状态检查，携带详细信息
+      show-details: always
+  tracing:
+    sampling:
+      # trace 采样信息，记录每个请求
+      probability: 1.0
