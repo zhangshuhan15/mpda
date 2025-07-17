@@ -10,7 +10,8 @@ import java.util.Map;
 public class HumanNode implements NodeAction {
 
     @Override
-    public Map<String, Object> apply(OverAllState state) throws Exception {
-        return Map.of();
+    public Map<String, Object> apply(OverAllState state) {
+        String h = state.value("l", String.class).get();
+        return Map.of("h", h);
     }
 }

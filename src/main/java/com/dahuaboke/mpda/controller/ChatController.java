@@ -20,7 +20,7 @@ public class ChatController {
     }
 
     @RequestMapping("chat")
-    public String chat(@RequestParam("q")String q) throws GraphRunnerException {
-        return stateGraph.invoke(Map.of("q", q)).get().value("result").toString();
+    public String chat(@RequestParam("q") String q) throws GraphRunnerException {
+        return stateGraph.invoke(Map.of("q", q)).get().value("h", String.class).get();
     }
 }

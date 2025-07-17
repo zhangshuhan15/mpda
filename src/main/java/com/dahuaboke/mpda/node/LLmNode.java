@@ -9,14 +9,12 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -32,14 +30,12 @@ public class LLmNode implements NodeAction {
 
     @Override
     public Map<String, Object> apply(OverAllState state) {
-        String q = state.value("q").get().toString();
+        if (state.containStrategy("h")) {
+            return Map.of();
+        }
+        String q = state.value("q", String.class).get();
         Prompt userPrompt = new Prompt(new UserMessage(q));
         ChatResponse response = chatClient.prompt(userPrompt).call().chatResponse();
-        AssistantMessage output = response.getResult().getOutput();
-        List<AssistantMessage.ToolCall> toolCalls = output.getToolCalls();
-        String responseByLLm = output.getText();
-        System.out.println(toolCalls);
-        System.out.println(responseByLLm);
-        return Map.of("agent", "agent");
+        return Map.of("r", response);
     }
 }
