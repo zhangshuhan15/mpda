@@ -2,7 +2,6 @@ package com.dahuaboke.mpda.tools;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,7 +9,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 public class CommandTool {
 
     @Tool(description = "在本地路径执行命令")

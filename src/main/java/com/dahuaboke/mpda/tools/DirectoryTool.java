@@ -1,7 +1,6 @@
 package com.dahuaboke.mpda.tools;
 
 import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class DirectoryTool {
 
     @Tool(description = "获取指定目录结构")

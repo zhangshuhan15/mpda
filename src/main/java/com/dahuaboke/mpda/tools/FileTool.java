@@ -2,7 +2,6 @@ package com.dahuaboke.mpda.tools;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +10,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 public class FileTool {
 
     @Tool(description = "创建文件并写入内容")

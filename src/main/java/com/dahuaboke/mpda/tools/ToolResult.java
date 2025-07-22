@@ -7,7 +7,10 @@ public class ToolResult {
     private String message;
     private Map<String, Object> data;
 
-    public ToolResult(String success, String s, Map<String, Object> data) {
+    public ToolResult(String status, String message, Map<String, Object> data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
     }
 
     // Getters and Setters

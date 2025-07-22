@@ -10,17 +10,10 @@ spring:
       chat:
         options:
           model: qwen3:8b
-          internal-tool-execution-enabled: false
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      # 应用健康状态检查，携带详细信息
-      show-details: always
-  tracing:
-    sampling:
-      # trace 采样信息，记录每个请求
-      probability: 1.0
+          internal-tool-execution-enabled: true
+      embedding:
+        options:
+          model: bge-large:335m
+logging:
+  level:
+    root: debug

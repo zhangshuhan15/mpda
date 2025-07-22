@@ -5,11 +5,11 @@ import com.alibaba.cloud.ai.graph.action.NodeAction;
 
 import java.util.Map;
 
-public class HumanNode implements NodeAction {
+public class ReturnNode implements NodeAction {
 
     @Override
     public Map<String, Object> apply(OverAllState state) {
-        System.out.println("===需要人工处理===");
-        return Map.of();
+        String h = state.value("r", String.class).get();
+        return Map.of("h", "回复是 》》》 " + h);
     }
 }
