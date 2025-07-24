@@ -1,18 +1,18 @@
-package com.dahuaboke.mpda.controller;
+package com.dahuaboke.mpda.web;
 
 import com.alibaba.cloud.ai.graph.CompiledGraph;
+import com.alibaba.cloud.ai.graph.NodeOutput;
+import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.StateGraph;
+import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
 import com.alibaba.cloud.ai.graph.exception.GraphStateException;
-import com.dahuaboke.mpda.tools.CommandTool;
-import com.dahuaboke.mpda.tools.DirectoryTool;
-import com.dahuaboke.mpda.tools.FileTool;
+import com.alibaba.fastjson.JSON;
 import com.dahuaboke.mpda.utils.CustomTokenTextSplitter;
 import com.dahuaboke.mpda.utils.DocumentReader;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.transformer.KeywordMetadataEnricher;
@@ -21,31 +21,59 @@ import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
 import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
-import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
+@CrossOrigin
 @RestController
 public class ChatController {
 
     @Autowired
-    private ObjectProvider<StateGraph> prototypeBeanProvider;
-    @Autowired
     private VectorStore vectorStore;
     @Autowired
     private ChatModel chatModel;
+    private CompiledGraph stateGraph;
 
-    @RequestMapping("chat")
-    public String chat(@RequestParam("q") String q) throws GraphRunnerException, GraphStateException {
-        CompiledGraph stateGraph = prototypeBeanProvider.getObject().compile();
-        return stateGraph.invoke(Map.of("q", q)).get().value("h", String.class).get();
+    public ChatController(ObjectProvider<StateGraph> prototypeBeanProvider) throws GraphStateException {
+        this.stateGraph = prototypeBeanProvider.getObject().compile();
+    }
+
+    @RequestMapping("/stream")
+    public Flux<String> chat(@RequestBody String q) throws GraphRunnerException {
+        String threadId = UUID.randomUUID().toString();
+        Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
+        AsyncGenerator<NodeOutput> generator = stateGraph.stream(Map.of("q", q),
+                RunnableConfig.builder().threadId(threadId).build());
+        CompletableFuture.runAsync(() -> {
+            generator.forEachAsync(output -> {
+                System.out.println("Received output: " +output.hashCode() + "result: " + output);
+                try {
+                    sink.tryEmitNext(JSON.toJSONString(output.state().value("r")));
+                } catch (Exception e) {
+                    throw new CompletionException(e);
+                }
+            }).thenRun(() -> sink.tryEmitComplete()).exceptionally(ex -> {
+                sink.tryEmitError(ex);
+                return null;
+            });
+        });
+
+        return sink.asFlux()
+                .doOnCancel(() -> System.out.println("Client disconnected from stream"))
+                .doOnError(e -> System.err.println("Error occurred during streaming: " + e));
     }
 
     public String ragSelect() {

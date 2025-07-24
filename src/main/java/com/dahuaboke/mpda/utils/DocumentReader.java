@@ -31,7 +31,6 @@ public class DocumentReader {
                 .withHorizontalRuleCreateDocument(true)
                 .withIncludeCodeBlock(false)
                 .withIncludeBlockquote(false)
-//                .withAdditionalMetadata("filename", "code.md")
                 .build();
         MarkdownDocumentReader reader = new MarkdownDocumentReader(resourceUrl, config);
         return reader.get();

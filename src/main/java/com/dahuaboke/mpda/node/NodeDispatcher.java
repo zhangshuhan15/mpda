@@ -14,9 +14,6 @@ public class NodeDispatcher implements EdgeAction {
 
     @Override
     public String apply(OverAllState state) {
-        if (stateGraphContext.isEnd()) {
-            return "go_return";
-        }
         return "go_human";
     }
 }

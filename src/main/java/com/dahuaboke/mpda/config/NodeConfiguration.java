@@ -12,13 +12,11 @@ import com.dahuaboke.mpda.node.NodeDispatcher;
 import com.dahuaboke.mpda.node.ReturnNode;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.model.transformer.SummaryMetadataEnricher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,7 +34,6 @@ public class NodeConfiguration {
             Map<String, KeyStrategy> keyStrategyHashMap = new HashMap<>();
             keyStrategyHashMap.put("q", new ReplaceStrategy());
             keyStrategyHashMap.put("r", new ReplaceStrategy());
-            keyStrategyHashMap.put("l", new ReplaceStrategy());
             return keyStrategyHashMap;
         };
 
@@ -49,8 +46,7 @@ public class NodeConfiguration {
                 .addConditionalEdges("llm", edge_async(new NodeDispatcher(stateGraphContext)),
                         Map.of("go_human", "human",
                                 "go_return", "return"))
-                .addEdge("human", "llm")
-                .addEdge("return", StateGraph.END);
+                .addEdge("human", StateGraph.END);
         return stateGraph;
     }
 }

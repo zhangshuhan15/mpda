@@ -3,17 +3,30 @@ server:
 spring:
   application:
     name: dahua-test-graph
+#  jackson:
+#    serialization:
+#      write-dates-as-timestamps: false
+#    date-format: yyyy-MM-dd HH:mm:ss
+  data:
+    redis:
+      url: redis://localhost:16379
   ai:
     openai:
-      base-url: http://localhost:11434
-      api-key: ollama
+      base-url: http://114.254.88.173:11434
+      api-key: sk-86e29d1b831d4959ae0a7a2ab0645d5b
       chat:
         options:
+#          model: qwen3-235b-a22b-instruct-2507
           model: qwen3:8b
           internal-tool-execution-enabled: true
       embedding:
         options:
           model: bge-large:335m
+    vectorstore:
+      redis:
+        initialize-schema: true
+        index-name: mpda-index
+        prefix: mpda-prefix
 logging:
   level:
     root: debug
