@@ -23,11 +23,11 @@ spring:
       embedding:
         options:
           model: bge-large:335m
-    vectorstore:
-      redis:
-        initialize-schema: true
-        index-name: mpda-index
-        prefix: mpda-prefix
+#    vectorstore:
+#      redis:
+#        initialize-schema: true
+#        index-name: mpda-index
+#        prefix: mpda-prefix
 logging:
   level:
     root: debug
