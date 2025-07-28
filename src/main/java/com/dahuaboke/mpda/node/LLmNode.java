@@ -1,9 +1,7 @@
 package com.dahuaboke.mpda.node;
 
-import com.alibaba.cloud.ai.graph.NodeOutput;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
-import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
 import com.alibaba.cloud.ai.graph.streaming.StreamingChatGenerator;
 import com.dahuaboke.mpda.context.StateGraphContext;
 import com.dahuaboke.mpda.tools.CommandTool;
@@ -13,15 +11,12 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import reactor.core.publisher.Flux;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 

@@ -7,7 +7,7 @@ import com.alibaba.cloud.ai.graph.StateGraph;
 import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
 import com.alibaba.cloud.ai.graph.exception.GraphStateException;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.dahuaboke.mpda.utils.CustomTokenTextSplitter;
 import com.dahuaboke.mpda.utils.DocumentReader;
 import org.springframework.ai.chat.client.ChatClient;
@@ -59,9 +59,12 @@ public class ChatController {
                 RunnableConfig.builder().threadId(threadId).build());
         CompletableFuture.runAsync(() -> {
             generator.forEachAsync(output -> {
-                System.out.println("Received output: " +output.hashCode() + "result: " + output);
+                System.out.println("Received output: " + output.hashCode() + "result: " + output);
                 try {
-                    sink.tryEmitNext(JSON.toJSONString(output.state().value("r")));
+                    if (output instanceof StreamingOutput) {
+                        StreamingOutput streamingOutput = (StreamingOutput) output;
+                        sink.tryEmitNext(streamingOutput.chunk());
+                    }
                 } catch (Exception e) {
                     throw new CompletionException(e);
                 }
