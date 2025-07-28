@@ -969,6 +969,51 @@
 
     // 窗口大小变化时同步高度
     window.addEventListener('resize', syncHeights);
+
+
+    function centerChatContainerWithoutWidthChange() {
+        const chatContainer = document.querySelector('.chat-container');
+        if (!chatContainer) {
+            console.log('未找到.chat-container元素');
+            return;
+        }
+
+        // 保存元素原始样式（尤其是宽度相关）
+        const originalStyles = {
+            width: chatContainer.style.width,
+            maxWidth: chatContainer.style.maxWidth,
+            minWidth: chatContainer.style.minWidth,
+            position: chatContainer.style.position,
+            top: chatContainer.style.top,
+            margin: chatContainer.style.margin
+        };
+
+        // 计算浏览器视口高度和元素自身高度
+        const viewportHeight = window.innerHeight;
+        const containerHeight = chatContainer.offsetHeight;
+
+        // 计算垂直居中偏移量
+        const verticalOffset = Math.max(0, (viewportHeight - containerHeight) / 2) -25;
+
+        // 仅设置垂直居中所需样式，不触碰任何宽度属性
+        chatContainer.style.position = 'relative'; // 保持在文档流中
+        chatContainer.style.marginLeft = 'auto';   // 水平居中（保留原有水平位置）
+        chatContainer.style.marginRight = 'auto';  // 水平居中（保留原有水平位置）
+        chatContainer.style.marginTop = `${verticalOffset}px`; // 仅修改顶部外边距实现垂直居中
+        chatContainer.style.marginBottom = '20px'; // 底部留空避免贴边
+
+        // 强制恢复原始宽度相关样式（确保不被意外修改）
+        chatContainer.style.width = originalStyles.width;
+        chatContainer.style.maxWidth = originalStyles.maxWidth;
+        chatContainer.style.minWidth = originalStyles.minWidth;
+    }
+
+    // 页面加载完成后执行
+    window.addEventListener('load', centerChatContainerWithoutWidthChange);
+
+    // 窗口大小改变时重新计算（保持宽度不变）
+    window.addEventListener('resize', centerChatContainerWithoutWidthChange);
+
 </script>
 </body>
 </html>
