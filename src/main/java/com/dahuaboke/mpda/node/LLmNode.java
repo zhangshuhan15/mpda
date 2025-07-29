@@ -3,7 +3,6 @@ package com.dahuaboke.mpda.node;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
 import com.alibaba.cloud.ai.graph.streaming.StreamingChatGenerator;
-import com.dahuaboke.mpda.context.StateGraphContext;
 import com.dahuaboke.mpda.tools.CommandTool;
 import com.dahuaboke.mpda.tools.DirectoryTool;
 import com.dahuaboke.mpda.tools.FileTool;
@@ -22,23 +21,25 @@ import java.util.Objects;
 
 public class LLmNode implements NodeAction {
 
-    private ChatClient chatClient;
-    private StateGraphContext stateGraphContext;
+    private final ChatClient chatClient;
+    private final ChatMemory chatMemory;
 
-    public LLmNode(StateGraphContext stateGraphContext, ChatModel chatModel, ChatMemory chatMemory) {
-        this.stateGraphContext = stateGraphContext;
+    public LLmNode(ChatModel chatModel, ChatMemory chatMemory) {
+        this.chatMemory = chatMemory;
         this.chatClient = ChatClient.builder(chatModel).defaultTools(
                         new FileTool(), new CommandTool(), new DirectoryTool())
                 .defaultAdvisors(
-                        new SimpleLoggerAdvisor(), MessageChatMemoryAdvisor.builder(chatMemory).conversationId(stateGraphContext.getConversationId()).build())
+                        new SimpleLoggerAdvisor())
                 .build();
     }
 
     @Override
     public Map<String, Object> apply(OverAllState state) {
         String q = state.value("q", String.class).get();
+        String conversationId = state.value("conversationId", String.class).get();
         Prompt userPrompt = new Prompt(new UserMessage(q));
-        Flux<ChatResponse> chatResponseFlux = chatClient.prompt(userPrompt).stream().chatResponse();
+        Flux<ChatResponse> chatResponseFlux = chatClient.prompt(userPrompt).advisors(
+                MessageChatMemoryAdvisor.builder(chatMemory).conversationId(conversationId).build()).stream().chatResponse();
         var r = StreamingChatGenerator.builder()
                 .startingNode("llmNode")
                 .startingState(state)

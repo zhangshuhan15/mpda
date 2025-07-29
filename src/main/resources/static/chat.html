@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>花花智能助手</title>
-    <link rel="stylesheet" href="static/css/font-awesome.min.css">
-    <script src="static/js/marked.min.js"></script>
-    <script src="static/js/highlight.min.js"></script>
-    <link rel="stylesheet" href="static/css/github.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <script src="js/marked.min.js"></script>
+    <script src="js/highlight.min.js"></script>
+    <link rel="stylesheet" href="css/github.min.css">
 
     <style>
         /* 全局样式 */
@@ -178,17 +178,22 @@
             transition: all 0.3s ease;
             background-color: #f8fafc;
             overflow-y: auto;
-            /* 使placeholder垂直居中 */
-            display: flex;
-            align-items: center;
+            /* 关键调整 */
+            line-height: 20px; /* 单行文本高度 */
+            box-sizing: border-box; /* 确保padding不影响整体高度 */
         }
 
-        /* 修复textarea的placeholder垂直居中 */
         #messageInput::placeholder {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            color: #94a3b8;
+            color: #94a3b8 !important;
+            text-align: left !important;
+            padding-top: 8px !important;
+            display: inline-block !important;
+            width: 100% !important;
+        }
+
+        /* 输入内容时移除额外padding */
+        #messageInput:not(:placeholder-shown)::placeholder {
+            padding-top: 0;
         }
 
         #messageInput:focus {
@@ -480,6 +485,7 @@
                 padding: 0 10px;
             }
         }
+
     </style>
 </head>
 <body>
@@ -511,6 +517,7 @@
     let renderTimer = null;
     let fullRawResponse = '';
     const maxInputHeight = 120; // 最大高度限制
+    const conversationId = new Date().getTime();
 
     // 检查并初始化Marked解析器
     function initMarked() {
@@ -755,7 +762,8 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'text/plain',
-                    'Accept': 'text/event-stream'
+                    'Accept': 'text/event-stream',
+                    'Conversation-Id': conversationId
                 },
                 body: text
             });

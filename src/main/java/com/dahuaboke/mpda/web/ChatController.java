@@ -8,15 +8,10 @@ import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
 import com.alibaba.cloud.ai.graph.exception.GraphStateException;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
-import com.dahuaboke.mpda.utils.CustomTokenTextSplitter;
-import com.dahuaboke.mpda.utils.DocumentReader;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.model.transformer.KeywordMetadataEnricher;
-import org.springframework.ai.model.transformer.SummaryMetadataEnricher;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
 import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
@@ -24,16 +19,11 @@ import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -52,27 +42,24 @@ public class ChatController {
     }
 
     @RequestMapping("/stream")
-    public Flux<String> chat(@RequestBody String q) throws GraphRunnerException {
-        String threadId = UUID.randomUUID().toString();
+    public Flux<String> chat(@RequestHeader("Conversation-Id") String conversationId, @RequestBody String q) throws GraphRunnerException {
         Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
-        AsyncGenerator<NodeOutput> generator = stateGraph.stream(Map.of("q", q),
-                RunnableConfig.builder().threadId(threadId).build());
-        CompletableFuture.runAsync(() -> {
-            generator.forEachAsync(output -> {
-                System.out.println("Received output: " + output.hashCode() + "result: " + output);
-                try {
-                    if (output instanceof StreamingOutput) {
-                        StreamingOutput streamingOutput = (StreamingOutput) output;
-                        sink.tryEmitNext(streamingOutput.chunk());
-                    }
-                } catch (Exception e) {
-                    throw new CompletionException(e);
+        AsyncGenerator<NodeOutput> generator = stateGraph.stream(Map.of("q", q, "conversationId", conversationId),
+                RunnableConfig.builder().threadId(conversationId).build());
+        CompletableFuture.runAsync(() -> generator.forEachAsync(output -> {
+            System.out.println("Received output: " + output.hashCode() + "result: " + output);
+            try {
+                if (output instanceof StreamingOutput) {
+                    StreamingOutput streamingOutput = (StreamingOutput) output;
+                    sink.tryEmitNext(streamingOutput.chunk());
                 }
-            }).thenRun(() -> sink.tryEmitComplete()).exceptionally(ex -> {
-                sink.tryEmitError(ex);
-                return null;
-            });
-        });
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
+        }).thenRun(() -> sink.tryEmitComplete()).exceptionally(ex -> {
+            sink.tryEmitError(ex);
+            return null;
+        }));
 
         return sink.asFlux()
                 .doOnCancel(() -> System.out.println("Client disconnected from stream"))
@@ -107,16 +94,5 @@ public class ChatController {
                 .call()
                 .content();
         return content;
-    }
-
-    @RequestMapping("/rag/save")
-    public void ragSave() {
-        List<Document> docsFromMd = DocumentReader.getDocsFromMd("classpath:/华安物联网主题股票型证券投资基金 2025 年第 1 季度报告.md");
-        List<Document> documents = CustomTokenTextSplitter.splitDocuments(docsFromMd);
-        KeywordMetadataEnricher enricher = new KeywordMetadataEnricher(chatModel, 5);
-        List<Document> apply = enricher.apply(documents);
-        SummaryMetadataEnricher summaryMetadataEnricher = new SummaryMetadataEnricher(chatModel, List.of(SummaryMetadataEnricher.SummaryType.CURRENT));
-        List<Document> apply1 = summaryMetadataEnricher.apply(apply);
-        vectorStore.add(apply1);
     }
 }
