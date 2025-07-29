@@ -706,7 +706,6 @@
                 let processedContent = currentResponseContent
                     .replace(/\n{3,}/g, '\n\n')
                     .replace(/([^\n])\n([^\n])/g, '$1 $2');
-
                 contentEl.innerHTML = marked.parse(processedContent);
             } else {
                 contentEl.textContent = currentResponseContent;
@@ -928,7 +927,8 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'text/plain',
-                            'Accept': 'text/event-stream'
+                            'Accept': 'text/event-stream',
+                            'Conversation-Id': conversationId
                         },
                         body: userContent
                     });
