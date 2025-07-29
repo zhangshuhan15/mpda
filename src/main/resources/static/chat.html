@@ -166,7 +166,7 @@
 
         #messageInput {
             flex: 1;
-            padding: 8px 16px;
+            padding: 16px 16px 0px 16px;
             border: 1px solid #e2e8f0;
             border-radius: 20px;
             font-size: 1rem;
@@ -186,7 +186,7 @@
         #messageInput::placeholder {
             color: #94a3b8 !important;
             text-align: left !important;
-            padding-top: 8px !important;
+            /* padding-top: 8px !important; */
             display: inline-block !important;
             width: 100% !important;
         }
@@ -561,6 +561,7 @@
         // 保存当前滚动位置
         const scrollTop = input.scrollTop;
 
+
         // 先设置为自动高度以获取正确的scrollHeight
         input.style.height = 'auto';
 
@@ -569,10 +570,13 @@
         // 确保至少有最小高度
         newHeight = Math.max(newHeight, 36);
 
+        if (!input.value.trim()) {
+            newHeight = 56
+        }
         // 同步设置输入框和按钮的高度
         input.style.height = newHeight + 'px';
         sendBtn.style.height = newHeight + 'px';
-
+        input.style.paddingBottom = newHeight > 56 ? '16px' : 0
         // 恢复滚动位置
         input.scrollTop = scrollTop;
     }
