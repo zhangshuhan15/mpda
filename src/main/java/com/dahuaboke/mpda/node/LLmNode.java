@@ -3,6 +3,7 @@ package com.dahuaboke.mpda.node;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
 import com.alibaba.cloud.ai.graph.streaming.StreamingChatGenerator;
+import com.dahuaboke.mpda.prompt.PromptUtils;
 import com.dahuaboke.mpda.tools.CommandTool;
 import com.dahuaboke.mpda.tools.DirectoryTool;
 import com.dahuaboke.mpda.tools.FileTool;
@@ -26,7 +27,7 @@ public class LLmNode implements NodeAction {
 
     public LLmNode(ChatModel chatModel, ChatMemory chatMemory) {
         this.chatMemory = chatMemory;
-        this.chatClient = ChatClient.builder(chatModel).defaultTools(
+        this.chatClient = ChatClient.builder(chatModel).defaultSystem(PromptUtils.SYSTEM).defaultTools(
                         new FileTool(), new CommandTool(), new DirectoryTool())
                 .defaultAdvisors(
                         new SimpleLoggerAdvisor())

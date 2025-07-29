@@ -1,8 +1,0 @@
-type=exe 需要安装 WiX（最好是3.x版本）
-.\jpackage.exe
---type exe/app-image
---name mpda
---input C:\Users\dahua\Desktop\mpda\target
---main-jar mpda-1.0-SNAPSHOT.jar
---main-class com.dahuaboke.mpda.MpdaApplication
---dest C:\Users\dahua\Desktop\mpda\target
