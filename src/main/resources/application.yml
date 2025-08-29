@@ -3,31 +3,47 @@ server:
 spring:
   application:
     name: dahua-test-graph
-#  jackson:
-#    serialization:
-#      write-dates-as-timestamps: false
-#    date-format: yyyy-MM-dd HH:mm:ss
-  data:
-    redis:
-      url: redis://localhost:16379
+  datasource:
+    url: jdbc:postgresql://20.12.0.38:5432/prptdb
+    username: schedulerdb
+    #    password: cG9zdGdyZXN0ZXN0Cg==
+    #   password: ENC(uVHRDvJL/EBn+YXdnDKaNETgT5sKrU4F)
+    password: LC@tyzy2025!
+    driver-class-name: org.postgresql.Driver
+
   ai:
     openai:
-      base-url: http://localhost:11434
-#      base-url: https://dashscope.aliyuncs.com/compatible-mode
-      api-key: sk-86e29d1b831d4959ae0a7a2ab0645d5b
+      base-url: http://20.200.25.216:8080
+      api-key: b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881
       chat:
         options:
-#          model: qwen3-plus
-          model: qwen3:8b
-          internal-tool-execution-enabled: true
-      embedding:
-        options:
-          model: bge-large:335m
-#    vectorstore:
-#      redis:
-#        initialize-schema: true
-#        index-name: mpda-index
-#        prefix: mpda-prefix
+          model: Qwen25-32B-1-test
+          internal-tool-execution-enabled: false
+          headers:
+            Authorization: "Bearer b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881"
+        completionsPath: /v1/chat/completion
+
+milvus:
+  host: 20.198.118.210 # Milvus 服务地址（默认本地）
+  port: 19530 # Milvus gRPC 端口（默认19530）
+  collectionName: docs06 # 向量集合名称（不存在时会自动创建）
+  embeddingDimension: 1024  # 向量维度（必须与模型输出一致）
+
+rerank:
+  base-url: http://20.200.25.216:8080
+  api-key: b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881
+  rerankPath: "/rerank"
+  model: Bge-rerank-v2-m3-test
+
+jasypt:
+  encryptor:
+    password: Yld@123
+
 logging:
   level:
-    root: debug
+    root: info
+
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: com.dahuaboke.mpda.tools.product.entity
