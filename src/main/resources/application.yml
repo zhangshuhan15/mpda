@@ -35,6 +35,9 @@ rerank:
   rerankPath: "/rerank"
   model: Bge-rerank-v2-m3-test
 
+mybatis:
+  mapper-locations: com.dahuaboke.mpda.tools.product.dao
+
 jasypt:
   encryptor:
     password: Yld@123
