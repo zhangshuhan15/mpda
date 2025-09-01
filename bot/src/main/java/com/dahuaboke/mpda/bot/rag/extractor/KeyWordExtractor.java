@@ -1,6 +1,6 @@
 package com.dahuaboke.mpda.bot.rag.extractor;
 
-import com.dahuaboke.mpda.bot.rag.utils.FundDocUtil;
+import com.dahuaboke.mpda.bot.rag.RagPrompt;
 import com.dahuaboke.mpda.core.rag.extractor.QueryExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class KeyWordExtractor implements QueryExtractor {
     public List<String> extractor() {
         String keys;
         try {
-            List<String> keyWords = FundDocUtil.getKeyWords();
+            List<String> keyWords = RagPrompt.FUND_KEYS;
             String augmentedUserText = DEFAULT_PROMPT_TEMPLATE
                     .render(Map.of("prefix", prefix, "suffix", suffix, "query", query, "keyWords", keyWords.toString()));
             Prompt text = new Prompt(augmentedUserText);

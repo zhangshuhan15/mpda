@@ -38,7 +38,7 @@ public class KeywordEnricher implements DocumentTransformer {
             Prompt text = new Prompt(document.getText() + keyWordTemplate);
             String content = chatModel.call(text).getResult().getOutput().getText();
             String keys = content.split(prefix)[1].split(suffix)[0].trim();
-            System.out.println("关键字为:" + keys);  // TODO
+
             if (keys.isEmpty()) {
                 document.getMetadata().put(EXCERPT_KEYWORDS_METADATA_KEY, content);
             }

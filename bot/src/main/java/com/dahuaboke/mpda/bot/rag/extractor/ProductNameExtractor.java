@@ -63,7 +63,8 @@ public class ProductNameExtractor implements QueryExtractor {
     }
 
     public static List<String> getProductName() {
-        return FundDocUtil.getProductMap().entrySet().stream().flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
+        //TODO 需要额外处理
+        return FundDocUtil.getProductMap("").entrySet().stream().flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
 
