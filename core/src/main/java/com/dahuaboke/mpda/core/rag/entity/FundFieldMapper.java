@@ -7,7 +7,7 @@ import java.util.Map;
 
 
 /**
- * @Desc: 基金字段映射工具（基于注解）
+ * @Desc: 字段映射工具（基于注解）
  * @Author：zhh
  * @Date：2025/8/7 14:13
  */
