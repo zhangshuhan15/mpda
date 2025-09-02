@@ -23,7 +23,7 @@ import java.util.List;
 public class PdfDocumentConvert implements DocumentConvert {
 
     private static final int PAGE_MARGIN = 70;
-    private static final int BOTTOM_MARGIN = 65;
+    private static final int BOTTOM_MARGIN = 60;
     private static final int TOP_TEXT_LINES_TO_DELETE = 3;
     private static final int BOTTOM_TEXT_LINES_TO_DELETE = 3;
 
