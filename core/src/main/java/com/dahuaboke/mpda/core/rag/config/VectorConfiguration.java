@@ -4,10 +4,12 @@ package com.dahuaboke.mpda.core.rag.config;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.param.ConnectParam;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.milvus.MilvusVectorStore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ComponentScan;
 
 
 /**
@@ -15,8 +17,9 @@ import org.springframework.context.annotation.Configuration;
  * @Author：zhh
  * @Date：2025/7/18 11:00
  */
-@Configuration
-public class VectorStoreConfiguration { // TODO 抽象向量库接口，满足pg、es、milvus、redis-stack等   rag能力为可关闭的，否则强依赖向量库配置
+@AutoConfiguration
+@ComponentScan("com.dahuaboke.mpda.core")
+public class VectorConfiguration { // TODO 抽象向量库接口，满足pg、es、milvus、redis-stack等   rag能力为可关闭的，否则强依赖向量库配置
 
     @Value("${milvus.host}")
     private String host;
@@ -53,8 +56,8 @@ public class VectorStoreConfiguration { // TODO 抽象向量库接口，满足pg
      * batchingStrategy：使用 TokenCountBatchingStrategy 策略进行批量处理。
      * initializeSchema：设置为 true，表示在构建时初始化数据库模式。
      */
-    @Bean(name = "milvusVectorStore")
-    public MilvusVectorStore vectorStore(MilvusServiceClient milvusClient, EmbeddingModel embeddingModel) {
+    @Bean
+    public VectorStore vectorStore(MilvusServiceClient milvusClient, EmbeddingModel embeddingModel) {
         return MilvusVectorStore.builder(milvusClient, embeddingModel)
                 .collectionName(collectionName)
                 .databaseName("default") // TODO 可配置
