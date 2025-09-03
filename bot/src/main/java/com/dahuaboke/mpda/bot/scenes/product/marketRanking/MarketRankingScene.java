@@ -1,6 +1,7 @@
 package com.dahuaboke.mpda.bot.scenes.product.marketRanking;
 
 
+import com.dahuaboke.mpda.bot.scenes.resolution.ResolutionScene;
 import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
 import com.dahuaboke.mpda.core.agent.scene.Scene;
@@ -35,5 +36,10 @@ public class MarketRankingScene implements Scene {
     @Override
     public AgentPrompt prompt() {
         return marketRankingPrompt;
+    }
+
+    @Override
+    public Class<? extends Scene> parent() {
+        return ResolutionScene.class;
     }
 }

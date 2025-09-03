@@ -55,7 +55,7 @@ public class PdfProcessingService {
                     "『END』"
             );
             keywordEnricher.setPrompt(RagPrompt.DEFAULT_PROMPT_TEMPLATE
-                    .render(Map.of("keyWords",RagPrompt.FUND_KEYS )));
+                    .render(Map.of("keyWords", RagPrompt.FUND_KEYS)));
 
             List<Document> keywordDocs = keywordEnricher.apply(docs);
             vectorStore.add(keywordDocs);

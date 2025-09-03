@@ -52,13 +52,22 @@
         <id column="fundClassificationCode" jdbcType="VARCHAR" property="fundClassificationCode"/>
         <id column="fundClassificationReasonCode" jdbcType="VARCHAR" property="fundClassificationReasonCode"/>
         <id column="fundClassificationModel" jdbcType="VARCHAR" property="fundClassificationModel"/>
-        <id column="fundClassificationReasonModel" jdbcType="VARCHAR"  property="fundClassificationReasonModel"/>
+        <id column="fundClassificationReasonModel" jdbcType="VARCHAR" property="fundClassificationReasonModel"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--
           WARNING - @mbg.generated
         -->
-        fundCode ,fundFullName ,fundShortName ,quarterlyReportDate ,fundManagerName ,managerAppointmentDate ,managerSecuritiesExperience ,managerDescription ,managerStartDate ,managerSecuritiesStartDate ,industryStockPortfolio ,topTenStockInvestments ,bondPortfolio ,nationalBondRatio ,centralBankBillRatio ,financialBondRatio ,policyFinancialBondRatio ,corporateBondRatio ,shortTermFinancingBillRatio ,mediumTermNoteRatio ,topFiveBondInvestments ,assetComposition ,performanceComparison ,netAssetValue ,totalFundShares ,fundManagerCompany ,fundCustodian ,operationMode ,openFrequency ,contractEffectiveDate ,investmentObjective ,investmentScope ,investmentStrategy ,performanceBenchmark ,riskReturnCharacteristics ,purchaseFee ,redemptionFee ,managementFee ,custodyFee ,salesServiceFee ,auditFee ,disclosureFee ,otherFees ,totalExpenseRatio ,fundClassificationCode ,fundClassificationReasonCode ,fundClassificationModel ,fundClassificationReasonModel
+        fundCode ,fundFullName ,fundShortName ,quarterlyReportDate ,fundManagerName ,managerAppointmentDate
+        ,managerSecuritiesExperience ,managerDescription ,managerStartDate ,managerSecuritiesStartDate
+        ,industryStockPortfolio ,topTenStockInvestments ,bondPortfolio ,nationalBondRatio ,centralBankBillRatio
+        ,financialBondRatio ,policyFinancialBondRatio ,corporateBondRatio ,shortTermFinancingBillRatio
+        ,mediumTermNoteRatio ,topFiveBondInvestments ,assetComposition ,performanceComparison ,netAssetValue
+        ,totalFundShares ,fundManagerCompany ,fundCustodian ,operationMode ,openFrequency ,contractEffectiveDate
+        ,investmentObjective ,investmentScope ,investmentStrategy ,performanceBenchmark ,riskReturnCharacteristics
+        ,purchaseFee ,redemptionFee ,managementFee ,custodyFee ,salesServiceFee ,auditFee ,disclosureFee ,otherFees
+        ,totalExpenseRatio ,fundClassificationCode ,fundClassificationReasonCode ,fundClassificationModel
+        ,fundClassificationReasonModel
     </sql>
     <sql id="Base_Column_List_Repeat_Key">
         <!--
@@ -67,68 +76,69 @@
         customerid, chrem_saccno, bonusmode, accttypeflag, greenacctno,acctflag, paper_no, openorgancode
     </sql>
 
-    <select id="selectByFundCode" parameterType="java.lang.String" resultType="com.dahuaboke.mpda.tools.product.entity.YwjqrProduct">
+    <select id="selectByFundCode" parameterType="java.lang.String"
+            resultType="com.dahuaboke.mpda.tools.product.entity.YwjqrProduct">
         select
         <include refid="Base_Column_List"/>
         from ywjqr_product
         where fundCode=#{fundCode}
     </select>
-<insert id="insertEntry"  >
-    insert into ywjqr_product(
-    <include refid="Base_Column_List"/>)
-    VALUES
-    <foreach collection="ywjqrProduct"  item="item" separator=",">
+    <insert id="insertEntry">
+        insert into ywjqr_product(
+        <include refid="Base_Column_List"/>)
+        VALUES
+        <foreach collection="ywjqrProduct" item="item" separator=",">
 
-        (#{item.fundCode}
-        ,#{item.fundFullName}
-        ,#{item.fundShortName}
-        ,#{item.quarterlyReportDate}
-        ,#{item.fundManagerName}
-        ,#{item.managerAppointmentDate}
-        ,#{item.managerSecuritiesExperience}
-        ,#{item.managerDescription}
-        ,#{item.managerStartDate}
-        ,#{item.managerSecuritiesStartDate}
-        ,#{item.industryStockPortfolio}
-        ,#{item.topTenStockInvestments}
-        ,#{item.bondPortfolio}
-        ,#{item.nationalBondRatio}
-        ,#{item.centralBankBillRatio}
-        ,#{item.financialBondRatio}
-        ,#{item.policyFinancialBondRatio}
-        ,#{item.corporateBondRatio}
-        ,#{item.shortTermFinancingBillRatio}
-        ,#{item.mediumTermNoteRatio}
-        ,#{item.topFiveBondInvestments}
-        ,#{item.assetComposition}
-        ,#{item.performanceComparison}
-        ,#{item.netAssetValue}
-        ,#{item.totalFundShares}
-        ,#{item.fundManagerCompany}
-        ,#{item.fundCustodian}
-        ,#{item.operationMode}
-        ,#{item.openFrequency}
-        ,#{item.contractEffectiveDate}
-        ,#{item.investmentObjective}
-        ,#{item.investmentScope}
-        ,#{item.investmentStrategy}
-        ,#{item.performanceBenchmark}
-        ,#{item.riskReturnCharacteristics}
-        ,#{item.purchaseFee}
-        ,#{item.redemptionFee}
-        ,#{item.managementFee}
-        ,#{item.custodyFee}
-        ,#{item.salesServiceFee}
-        ,#{item.auditFee}
-        ,#{item.disclosureFee}
-        ,#{item.otherFees}
-        ,#{item.totalExpenseRatio}
-        ,#{item.fundClassificationCode}
-        ,#{item.fundClassificationReasonCode}
-        ,#{item.fundClassificationModel}
-        ,#{item.fundClassificationReasonModel})
-    </foreach>
+            (#{item.fundCode}
+            ,#{item.fundFullName}
+            ,#{item.fundShortName}
+            ,#{item.quarterlyReportDate}
+            ,#{item.fundManagerName}
+            ,#{item.managerAppointmentDate}
+            ,#{item.managerSecuritiesExperience}
+            ,#{item.managerDescription}
+            ,#{item.managerStartDate}
+            ,#{item.managerSecuritiesStartDate}
+            ,#{item.industryStockPortfolio}
+            ,#{item.topTenStockInvestments}
+            ,#{item.bondPortfolio}
+            ,#{item.nationalBondRatio}
+            ,#{item.centralBankBillRatio}
+            ,#{item.financialBondRatio}
+            ,#{item.policyFinancialBondRatio}
+            ,#{item.corporateBondRatio}
+            ,#{item.shortTermFinancingBillRatio}
+            ,#{item.mediumTermNoteRatio}
+            ,#{item.topFiveBondInvestments}
+            ,#{item.assetComposition}
+            ,#{item.performanceComparison}
+            ,#{item.netAssetValue}
+            ,#{item.totalFundShares}
+            ,#{item.fundManagerCompany}
+            ,#{item.fundCustodian}
+            ,#{item.operationMode}
+            ,#{item.openFrequency}
+            ,#{item.contractEffectiveDate}
+            ,#{item.investmentObjective}
+            ,#{item.investmentScope}
+            ,#{item.investmentStrategy}
+            ,#{item.performanceBenchmark}
+            ,#{item.riskReturnCharacteristics}
+            ,#{item.purchaseFee}
+            ,#{item.redemptionFee}
+            ,#{item.managementFee}
+            ,#{item.custodyFee}
+            ,#{item.salesServiceFee}
+            ,#{item.auditFee}
+            ,#{item.disclosureFee}
+            ,#{item.otherFees}
+            ,#{item.totalExpenseRatio}
+            ,#{item.fundClassificationCode}
+            ,#{item.fundClassificationReasonCode}
+            ,#{item.fundClassificationModel}
+            ,#{item.fundClassificationReasonModel})
+        </foreach>
 
-</insert>
+    </insert>
 
 </mapper>

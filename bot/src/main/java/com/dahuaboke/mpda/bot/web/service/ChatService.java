@@ -1,7 +1,7 @@
 package com.dahuaboke.mpda.bot.web.service;
 
-import com.dahuaboke.mpda.bot.scenes.SceneManager;
 import com.dahuaboke.mpda.core.agent.exception.MpdaException;
+import com.dahuaboke.mpda.core.agent.scene.SceneManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

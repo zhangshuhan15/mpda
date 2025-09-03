@@ -64,12 +64,12 @@ public class ProcessingMonitor {
         result.generateReport();
         return result;
     }
-    
+
     /**
      * 将失败记录写入文件
      *
-     * @param failures     失败产品映射
-     * @param filePrefix   文件前缀
+     * @param failures   失败产品映射
+     * @param filePrefix 文件前缀
      */
     public void writeFailuresToFile(Map<?, String> failures, String filePrefix) {
         if (failures.isEmpty()) {

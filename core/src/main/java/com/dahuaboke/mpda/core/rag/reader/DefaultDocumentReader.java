@@ -14,7 +14,7 @@ import java.io.IOException;
  * @Date：2025/9/1 22:50
  */
 @Component
-public class DefaultDocumentReader implements DocumentReader{
+public class DefaultDocumentReader implements DocumentReader {
 
     @Override
     public Resource[] read(String path) throws IOException {

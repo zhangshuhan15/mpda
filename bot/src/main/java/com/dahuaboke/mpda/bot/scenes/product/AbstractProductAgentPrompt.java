@@ -22,4 +22,9 @@ public abstract class AbstractProductAgentPrompt implements AgentPrompt {
     public String description() {
         return this.description;
     }
+
+    @Override
+    public void build(Map params) {
+
+    }
 }

@@ -12,6 +12,7 @@ public class FundDocUtil {
 
     /**
      * 通过文件名称,提取基金代码和基金名称
+     *
      * @return
      */
     public static Map<String, String> getProductMap(String filename) {

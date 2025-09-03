@@ -8,16 +8,12 @@ import com.dahuaboke.mpda.core.agent.scene.Scene;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.dahuaboke.mpda.bot.scenes.resolution.ResolutionScene.BEAN_NAME;
-
 /**
  * auth: dahua
  * time: 2025/8/21 15:03
  */
-@Component(BEAN_NAME)
+@Component
 public class ResolutionScene implements Scene {
-
-    public static final String BEAN_NAME = "resolutionScene";
 
     @Autowired
     private ResolutionGraph resolutionGraph;
@@ -38,5 +34,10 @@ public class ResolutionScene implements Scene {
     @Override
     public AgentPrompt prompt() {
         return resolutionPrompt;
+    }
+
+    @Override
+    public Class<? extends Scene> parent() {
+        return null;
     }
 }

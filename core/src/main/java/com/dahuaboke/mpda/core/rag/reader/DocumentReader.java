@@ -10,7 +10,7 @@ import java.io.IOException;
  * @Author：zhh
  * @Date：2025/9/1 22:45
  */
-public interface  DocumentReader {
+public interface DocumentReader {
 
     Resource[] read(String path) throws IOException;
 }

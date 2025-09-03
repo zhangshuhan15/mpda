@@ -1,7 +1,6 @@
-package com.dahuaboke.mpda.bot.scenes;
+package com.dahuaboke.mpda.core.agent.chain;
 
 
-import com.dahuaboke.mpda.core.agent.chain.AbstractChain;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;

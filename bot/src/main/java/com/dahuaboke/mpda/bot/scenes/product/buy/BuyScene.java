@@ -1,6 +1,7 @@
 package com.dahuaboke.mpda.bot.scenes.product.buy;
 
 
+import com.dahuaboke.mpda.bot.scenes.resolution.ResolutionScene;
 import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
 import com.dahuaboke.mpda.core.agent.scene.Scene;
@@ -34,5 +35,10 @@ public class BuyScene implements Scene {
     @Override
     public AgentPrompt prompt() {
         return buyPrompt;
+    }
+
+    @Override
+    public Class<? extends Scene> parent() {
+        return ResolutionScene.class;
     }
 }

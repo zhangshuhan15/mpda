@@ -63,6 +63,11 @@ public class DocumentQueryService {
     @Autowired
     private ProcessingMonitor processingMonitor;
 
+    private static boolean checkFundType(String fundCode) {
+        // TODO 合并书涵编写的基金类型查询代码
+        return true;
+    }
+
     /**
      * 处理单个产品
      */
@@ -157,11 +162,6 @@ public class DocumentQueryService {
 
         // 将失败记录写入文件
         processingMonitor.writeFailuresToFile(result.getFailures(), "product_processing");
-    }
-
-    private static boolean checkFundType(String fundCode) {
-        // TODO 合并书涵编写的基金类型查询代码
-        return true;
     }
 
     private Map<String, String> initAllQuery() {

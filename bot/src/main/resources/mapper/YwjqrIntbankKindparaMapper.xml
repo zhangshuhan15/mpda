@@ -142,7 +142,8 @@
     <delete id="deleteAll">
         delete from ywjqr_intbank_kindpara;
     </delete>
-    <select id="selectListFilter" resultType="com.dahuaboke.mpda.tools.product.entity.YwjqrIntbankKindpara" parameterType="com.dahuaboke.mpda.tools.product.dto.FilterProdInfoReq">
+    <select id="selectListFilter" resultType="com.dahuaboke.mpda.tools.product.entity.YwjqrIntbankKindpara"
+            parameterType="com.dahuaboke.mpda.tools.product.dto.FilterProdInfoReq">
         select a.* from ywjqr_intbank_kindpara a , ywjqr_product b where a.fund_prodt_no = b.fund_code
         <if test="fundType != null and fundType.size() > 0">
             and a.fund_type in

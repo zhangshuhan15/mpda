@@ -14,4 +14,6 @@ public interface Scene {
     Graph graph();
 
     AgentPrompt prompt();
+
+    Class<? extends Scene> parent();
 }

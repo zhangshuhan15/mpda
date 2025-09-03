@@ -3,10 +3,15 @@ package com.dahuaboke.mpda.core.agent.scene;
 import com.dahuaboke.mpda.core.agent.chain.Chain;
 import com.dahuaboke.mpda.core.agent.exception.MpdaException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
+import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
 import com.dahuaboke.mpda.core.trace.TraceManager;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * auth: dahua
@@ -17,25 +22,34 @@ public class SceneWrapper {
     private final String sceneId = UUID.randomUUID().toString();
     private final TraceManager traceManager;
     private final Chain chain;
+    private List<SceneWrapper> childrenWrapper;
+    private AgentPrompt prompt;
+    private String description;
 
-    private SceneWrapper(Chain chain, TraceManager traceManager) {
+    private SceneWrapper(Chain chain, TraceManager traceManager, AgentPrompt prompt, String description) {
         this.chain = chain;
         this.traceManager = traceManager;
+        this.prompt = prompt;
+        this.description = description;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public String getSceneId() {
-        return sceneId;
+    public void addChildWrapper(SceneWrapper childWrapper) {
+        if (childrenWrapper == null) {
+            childrenWrapper = new ArrayList<>();
+        }
+        this.childrenWrapper.add(childWrapper);
     }
 
     public void init() throws MpdaGraphException {
+        prompt.build(childrenWrapper.stream().collect(Collectors.toMap(child -> child.sceneId, child -> child.description)));
         this.chain.init();
     }
 
-    public String execute(String conversationId, String query) throws MpdaException {
+    private String execute(String conversationId, String query) throws MpdaException {
         try {
             traceManager.setConversationId(conversationId);
             traceManager.setSceneId(this.sceneId);
@@ -46,7 +60,7 @@ public class SceneWrapper {
         }
     }
 
-    public Flux<String> executeAsync(String conversationId, String query) throws MpdaException {
+    private Flux<String> executeAsync(String conversationId, String query) throws MpdaException {
         try {
             traceManager.setConversationId(conversationId);
             traceManager.setSceneId(this.sceneId);
@@ -57,10 +71,33 @@ public class SceneWrapper {
         }
     }
 
+    public boolean isEnd() {
+        return childrenWrapper == null;
+    }
+
+    public Flux<String> apply(String conversationId, String query) throws MpdaException {
+        return executeAsync(conversationId, query);
+    }
+
+    public SceneWrapper next(String conversationId, String query) throws MpdaException {
+        String execute = execute(conversationId, query);
+        if (execute.startsWith("<think>")) {
+            execute = execute.replaceFirst("(?s)<think>.*?</think>", "");
+        }
+        String finalExecute = execute.trim();
+        Optional<SceneWrapper> match = childrenWrapper.stream().filter(child -> child.sceneId.equals(finalExecute)).findFirst();
+        if (match.isPresent()) {
+            return match.get();
+        }
+        throw new MpdaException(finalExecute); //TODO
+    }
+
     public static final class Builder {
 
         private Chain chain;
         private TraceManager traceManager;
+        private AgentPrompt prompt;
+        private String description;
 
         private Builder() {
         }
@@ -75,8 +112,18 @@ public class SceneWrapper {
             return this;
         }
 
+        public Builder prompt(AgentPrompt prompt) {
+            this.prompt = prompt;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
         public SceneWrapper build() {
-            return new SceneWrapper(chain, traceManager);
+            return new SceneWrapper(chain, traceManager, prompt, description);
         }
     }
 }

@@ -37,10 +37,11 @@ public class ResolutionAgentPrompt implements AgentPrompt {
         return this.description;
     }
 
-    public void buildPrompt(Map<String, String> dependencies) {
+    @Override
+    public void build(Map params) {
         try {
             PromptTemplate promptTemplate = new PromptTemplate(prompt);
-            promptTemplate.add("scenes", objectMapper.writeValueAsString(dependencies));
+            promptTemplate.add("scenes", objectMapper.writeValueAsString(params));
             this.description = promptTemplate.create().getContents();
         } catch (JsonProcessingException e) {
             e.printStackTrace();//TODO
