@@ -1,41 +1,37 @@
 package com.dahuaboke.mpda.client;
 
-
+import com.dahuaboke.mpda.client.constants.RagConstant;
 import com.dahuaboke.mpda.client.entity.CommonReq;
 import com.dahuaboke.mpda.client.entity.CommonResp;
-import com.dahuaboke.mpda.client.entity.TxBodyReq;
-import com.dahuaboke.mpda.client.entity.TxHeaderReq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import org.glassfish.hk2.utilities.reflection.ParameterizedTypeImpl;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.util.JacksonUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
- * auth: dahua
- * time: 2025/9/1 13:35
+ * @Desc: 新核心通用请求客户端
+ * @Author：zhh
+ * @Date：2025/9/4 17:32
  */
-public class CustomClient<T> {
+public class CustomClient {
 
-    /**
-     * ！！！一切的前提
-     * 工具调用使用同步
-     * 人工返回使用流式输出
-     */
 
     public static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -44,6 +40,7 @@ public class CustomClient<T> {
             .build()
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
     private static final Predicate<String> SSE_DONE_PREDICATE = "[DONE]"::equals;
+
     private final RestClient restClient;
     private final WebClient webClient;
 
@@ -52,54 +49,62 @@ public class CustomClient<T> {
         this.webClient = webClient;
     }
 
-    public T execute() {
-        CommonReq bodyReq = new CommonReq();
-        TxBodyReq<Object> embeddingReq = new TxBodyReq<>();
-        embeddingReq.setTxEntity(Map.of("text", ""));
-        TxHeaderReq txHeaderReq = new TxHeaderReq();
-        txHeaderReq.setStartSysOrCmptNo("99370000000");
-        txHeaderReq.setSendSysOrCmptNo("99370000000");
-        txHeaderReq.setTargetSysOrCmptNo("99370000000");
-        txHeaderReq.setServNo("rag_v1_C014007");
-        bodyReq.setTxBody(embeddingReq);
-        bodyReq.setTxHeader(txHeaderReq);
-        String url = "http://20.200.175.85:32011/online-service/rag/v1/C011001";
-        MultiValueMap<String, String> customHeaders = new LinkedMultiValueMap<>();
-        ParameterizedTypeReference<CommonResp<T>> typeRef = new ParameterizedTypeReference<>() {
-        };
-        ResponseEntity<CommonResp<T>> responseEntity = restClient.post()
-                .uri(url)
-                .headers(headers -> headers.addAll(customHeaders))
-                .body(bodyReq)
-                .retrieve()
-                .toEntity(typeRef);
-        return responseEntity.getBody().getTxBody();
+
+    private static final Logger log = LoggerFactory.getLogger(CustomClient.class);
+
+    public <T,R> CommonResp<R> execute(String url, CommonReq<T> commonReq) {
+        ParameterizedTypeReference<CommonResp<R>> typeReference = new ParameterizedTypeReference<>() { };
+        return request(url,commonReq,typeReference);
     }
 
-    public Flux<T> executeStream() {
-        CommonReq bodyReq = new CommonReq();
-        TxBodyReq<Object> embeddingReq = new TxBodyReq<>();
-        embeddingReq.setTxEntity(Map.of("text", ""));
-        TxHeaderReq txHeaderReq = new TxHeaderReq();
-        txHeaderReq.setStartSysOrCmptNo("99370000000");
-        txHeaderReq.setSendSysOrCmptNo("99370000000");
-        txHeaderReq.setTargetSysOrCmptNo("99370000000");
-        txHeaderReq.setServNo("rag_v1_C014007");
-        bodyReq.setTxBody(embeddingReq);
-        bodyReq.setTxHeader(txHeaderReq);
-        String url = "http://20.200.175.85:32011/online-service/rag/v1/C011001";
-        MultiValueMap<String, String> customHeaders = new LinkedMultiValueMap<>();
-        TypeReference<CommonResp<T>> typeRef = new TypeReference<>() {
+    public <T,R> R execute(String url, CommonReq<T> commonReq, Class<R> dataTypeClass) {
+        ParameterizedTypeReference<CommonResp<R>> typeReference = new ParameterizedTypeReference<>() {
+            @NotNull
+            @Override
+            public Type getType() {
+                return new ParameterizedTypeImpl(CommonResp.class, dataTypeClass);
+            }
         };
+        CommonResp<R> resp = request(url, commonReq, typeReference);
+        if(resp.getTxBody() == null ) {
+            log.error("txBody {} fails to send due to: {}",url,"txBody is null");
+        }
+
+        return resp.getTxBody().getTxEntity();
+    }
+
+    private <T,R> CommonResp<R> request(String url, CommonReq<T> commonReq, ParameterizedTypeReference<CommonResp<R>> typeReference){
+
+        ResponseEntity<CommonResp<R>> commonRespResponseEntity = restClient
+                .post()
+                .uri(url)
+                .body(commonReq)
+                .retrieve()
+                .toEntity(typeReference);
+
+        CommonResp<R> resp = commonRespResponseEntity.getBody();
+        assert resp != null;
+        if (!RagConstant.SUCCESS_CODE.equals(resp.getTxHeader().getServRespCd())) {
+            log.error("interface {} fails to send due to: {}",url,resp.getTxHeader().getServRespDescInfo());
+        }
+        return resp;
+    }
+
+
+    public<T,R> Flux<R> executeStream(String url, CommonReq<T> commonReq) {
+        TypeReference<CommonResp<R>> typeRef = new TypeReference<>() {};
+        return requestStream(url,commonReq,typeRef);
+    }
+
+
+    private <T, R> Flux<R> requestStream(String url, CommonReq<T> commonReq, TypeReference<CommonResp<R>> typeRef){
+
         return this.webClient.post()
                 .uri(url)
-                .headers(headers -> headers.addAll(customHeaders))
-                .body(Mono.just(bodyReq), CommonReq.class)
+                .body(Mono.just(commonReq), CommonReq.class)
                 .retrieve()
                 .bodyToFlux(String.class)
-                // cancels the flux stream after the "[DONE]" is received.
                 .takeUntil(SSE_DONE_PREDICATE)
-                // filters out the "[DONE]" message.
                 .filter(SSE_DONE_PREDICATE.negate())
                 .map(content ->
                 {
@@ -109,16 +114,14 @@ public class CustomClient<T> {
                         throw new RuntimeException(e);
                     }
                 })
-                // Flux<ChatCompletionChunk> -> Flux<Flux<ChatCompletionChunk>>
-                // Merging the window chunks into a single chunk.
-                // Reduce the inner Flux<ChatCompletionChunk> window into a single
-                // Mono<ChatCompletionChunk>,
-                // Flux<Flux<ChatCompletionChunk>> -> Flux<Mono<ChatCompletionChunk>>
+
                 .concatMapIterable(window -> {
-                    Mono<T> monoChunk = Mono.just(window.getTxBody());
+                    Mono<R> monoChunk = Mono.just(window.getTxBody().getTxEntity());
                     return List.of(monoChunk);
                 })
-                // Flux<Mono<ChatCompletionChunk>> -> Flux<ChatCompletionChunk>
                 .flatMap(mono -> mono);
     }
+
+
+
 }

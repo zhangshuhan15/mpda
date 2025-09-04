@@ -1,6 +1,7 @@
 package com.dahuaboke.mpda.client;
 
 
+import com.dahuaboke.mpda.client.entity.CommonResp;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
@@ -42,13 +43,13 @@ public class CustomChatModel implements ChatModel {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomChatModel.class);
     private final ChatModelObservationConvention DEFAULT_OBSERVATION_CONVENTION = new DefaultChatModelObservationConvention();
-    private final CustomClient<Map> customClient;
+    private final CustomClient customClient;
     private final CustomChatOptions customChatOptions;
     private final ObservationRegistry observationRegistry;
     private ChatModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
     public CustomChatModel(CustomChatOptions customChatOptions, ObservationRegistry observationRegistry) {
-        this.customClient = new CustomClient<>(null, null);
+        this.customClient = new CustomClient(null, null);
         this.customChatOptions = customChatOptions;
         this.observationRegistry = observationRegistry;
     }
@@ -71,7 +72,7 @@ public class CustomChatModel implements ChatModel {
                         this.observationRegistry)
                 .observe(() -> {
 
-                    Map execute = customClient.execute();
+                    CommonResp execute = customClient.execute("",null);
 
                     if (execute == null) {
                         logger.warn("No chat completion returned for prompt: {}", prompt);
@@ -98,7 +99,7 @@ public class CustomChatModel implements ChatModel {
     public Flux<ChatResponse> internalStream(Prompt prompt, ChatResponse previousChatResponse) {
         return Flux.deferContextual(contextView -> {
 
-            Flux<Map> executeFlux = customClient.executeStream();
+            Flux<CommonResp> executeFlux = customClient.executeStream("",null);
 
             // For chunked responses, only the first chunk contains the choice role.
             // The rest of the chunks with same ID share the same role.
