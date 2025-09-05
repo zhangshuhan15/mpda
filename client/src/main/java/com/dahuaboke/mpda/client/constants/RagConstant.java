@@ -9,8 +9,6 @@ public class RagConstant {
 
     public static final String SUCCESS_CODE = "0000000000000000";
 
-    public static final String RAG_URL = "http://20.200.175.85:32011/online-service/rag/v1/";
-
     public static final String RAG_V1_C014007 = "rag_v1_C014007";
 
     public static final String RAG_V1_C014006 = "rag_v1_C014006";

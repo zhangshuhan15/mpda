@@ -1,4 +1,4 @@
-package com.dahuaboke.mpda.client.handle;
+package com.dahuaboke.mpda.client;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -10,13 +10,24 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "core.client")
-public class CoreClientProperties {
+public class ClientProperties {
+
+    // 地址
+    private String url;
 
     // 发送方系统号
     private String sendSysNo;
 
     // 接收方系统号
     private String targetSysNo;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getSendSysNo() {
         return sendSysNo;

@@ -1,5 +1,6 @@
 package com.dahuaboke.mpda.client.handle;
 
+import com.dahuaboke.mpda.client.ClientProperties;
 import com.dahuaboke.mpda.client.CustomClient;
 import com.dahuaboke.mpda.client.constants.RagConstant;
 import com.dahuaboke.mpda.client.entity.CommonReq;
@@ -22,10 +23,10 @@ public class VectorStoreRequestHandle {
 
     private final CustomClient customCommonClient;
 
-    private final CoreClientProperties coreClientProperties;
+    private final ClientProperties coreClientProperties;
 
 
-    public VectorStoreRequestHandle(CustomClient customCommonClient, CoreClientProperties coreClientProperties) {
+    public VectorStoreRequestHandle(CustomClient customCommonClient, ClientProperties coreClientProperties) {
         this.customCommonClient = customCommonClient;
         this.coreClientProperties = coreClientProperties;
     }
@@ -47,7 +48,7 @@ public class VectorStoreRequestHandle {
         txBodyReq.setTxEntity(c014006Req);
         bodyReq.setTxBody(txBodyReq);
 
-        return customCommonClient.execute(RagConstant.RAG_URL + RagConstant.C014006, bodyReq, C014006Resp.class);
+        return customCommonClient.execute( coreClientProperties.getUrl() + RagConstant.C014006, bodyReq, C014006Resp.class);
 
     }
 
@@ -73,7 +74,7 @@ public class VectorStoreRequestHandle {
         insertReq.setTxEntity(c014001Req);
         bodyReq.setTxBody(insertReq);
 
-        return customCommonClient.execute(RagConstant.RAG_URL + RagConstant.C014001, bodyReq, C014001Resp.class);
+        return customCommonClient.execute(coreClientProperties.getUrl() + RagConstant.C014001, bodyReq, C014001Resp.class);
     }
 
 

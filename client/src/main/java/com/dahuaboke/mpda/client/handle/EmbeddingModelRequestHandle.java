@@ -1,5 +1,6 @@
 package com.dahuaboke.mpda.client.handle;
 
+import com.dahuaboke.mpda.client.ClientProperties;
 import com.dahuaboke.mpda.client.CustomClient;
 import com.dahuaboke.mpda.client.constants.RagConstant;
 import com.dahuaboke.mpda.client.entity.CommonReq;
@@ -18,9 +19,9 @@ public class EmbeddingModelRequestHandle {
 
     private final CustomClient customCommonClient;
 
-    private final CoreClientProperties coreClientProperties;
+    private final ClientProperties coreClientProperties;
 
-    public EmbeddingModelRequestHandle(CustomClient customCommonClient, CoreClientProperties coreClientProperties) {
+    public EmbeddingModelRequestHandle(CustomClient customCommonClient, ClientProperties coreClientProperties) {
         this.customCommonClient = customCommonClient;
         this.coreClientProperties = coreClientProperties;
     }
@@ -43,7 +44,7 @@ public class EmbeddingModelRequestHandle {
         txBodyReq.setTxEntity(c014007Req);
         bodyReq.setTxBody(txBodyReq);
 
-        String url = RagConstant.RAG_URL + RagConstant.C014007;
+        String url = coreClientProperties.getUrl() + RagConstant.C014007;
         C014007Resp resp = customCommonClient.execute(url, bodyReq, C014007Resp.class);
 
         return resp.getVector();
