@@ -20,8 +20,6 @@ public class VectorStoreConfig {
         return CustomVectorStore.builder(embeddingModel,vectorStoreRequestHandle)
                 .collectionName(FundConstant.INDEX_NAME)
                 .vectorFieldName(FundConstant.EMBEDDING)
-                .sendSysNo(FundConstant.LC_SYSTEM)
-                .targetSysNo(FundConstant.LC_SYSTEM)
                 .converter(new FundDocumentConverter())
                 .build();
     }
