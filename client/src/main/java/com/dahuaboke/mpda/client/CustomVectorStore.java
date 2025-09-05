@@ -9,6 +9,7 @@ import com.dahuaboke.mpda.client.handle.RagRequestHandle;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.embedding.EmbeddingOptionsBuilder;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
 import org.springframework.ai.vectorstore.AbstractVectorStoreBuilder;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -53,12 +54,12 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
     /**
      * 需要向量查询的字段
      */
-    private String vectorFieldName = "";
+    private  String vectorFieldName = "embedding";
 
     /**
      * 转换接口对象
      */
-    private final DocumentConverter converter;
+    private  DocumentConverter converter;
 
 
     /**
@@ -90,6 +91,9 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
     public void doAdd(@NotNull List<Document> documents) {
         C014001Resp txEntity;
         if (converter == null) {
+            List<float[]> embeddings = this.embeddingModel.embed(documents, EmbeddingOptionsBuilder.builder().build(),
+                    this.batchingStrategy);
+
             txEntity = ragRequestHandle.sendC014001(collectionName, documents);
         } else {
             txEntity = ragRequestHandle.sendC014001(collectionName, converter.requestConvert(documents, embeddingModel));
@@ -112,8 +116,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         int topK = request.getTopK();
         double similarityThreshold = request.getSimilarityThreshold();
 
-        //TODO 用embedding模型来查询
-        float[] embedding = ragRequestHandle.sendC014007(query);
+        float[] embedding = embeddingModel.embed(query);
         Filter.Expression filterExpression = request.getFilterExpression();
         Map<String, Object> conditionMap = new HashMap<>();
         extractConditions(filterExpression,conditionMap);
@@ -211,7 +214,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
 
         private String targetSysNo = "";
 
-        private String vectorFieldName = "";
+        private String vectorFieldName = "embedding";
 
         private DocumentConverter converter;
 

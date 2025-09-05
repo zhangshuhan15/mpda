@@ -25,8 +25,8 @@ public class FundDocumentConverter implements DocumentConverter<FundEntity> {
 
         for (Document document : documents) {
             FundEntity fundEntity = new FundEntity();
-            // TODO embeddingModel 去做查询
-            fundEntity.setEmbedding(null);
+            float[] embed = embeddingModel.embed(document.getText());
+            fundEntity.setEmbedding(embed);
             fundEntity.setText(document.getText());
             Map<String, Object> metadata = document.getMetadata();
 

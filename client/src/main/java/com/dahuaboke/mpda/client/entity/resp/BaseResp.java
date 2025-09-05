@@ -1,5 +1,10 @@
 package com.dahuaboke.mpda.client.entity.resp;
 
+/**
+ * @Desc: 通用返回内容
+ * @Author：zhh
+ * @Date：2025/9/1 10:10
+ */
 public class BaseResp {
 
     /**
