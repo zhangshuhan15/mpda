@@ -8,6 +8,7 @@ import com.dahuaboke.mpda.core.consts.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +28,7 @@ public class StreamLlmNode implements NodeAction {
         String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
         String sceneId = state.value(Constants.SCENE_ID, String.class).get();
         String key = Constants.RESULT;
-        return Map.of(key, chatClientManager.stream(conversationId, sceneId, prompt, query, key, state, "streamLlmNode"));
+        List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).get();
+        return Map.of(key, chatClientManager.stream(conversationId, sceneId, prompt, query, key, state, "streamLlmNode", sceneMerge));
     }
 }

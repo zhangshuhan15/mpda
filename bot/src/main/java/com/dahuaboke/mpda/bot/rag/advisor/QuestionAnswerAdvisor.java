@@ -140,7 +140,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
         String documentContext = topKDocuments == null ? ""
                 : topKDocuments.stream().map(Document::getText).collect(Collectors.joining(System.lineSeparator()));
 
-        UserMessage userMessage = chatClientRequest.prompt().getUserMessage();
+        UserMessage userMessage = chatClientRequest.prompt().getUserMessage(); // TODO 替换为wrapper包装类
 
         String augmentedUserText = this.promptTemplate
                 .render(Map.of("query", userMessage.getText(), "question_answer_context", documentContext));

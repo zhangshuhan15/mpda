@@ -8,7 +8,7 @@ import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
 import com.alibaba.cloud.ai.graph.streaming.StreamingChatGenerator;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.consts.Constants;
-import org.springframework.ai.chat.messages.AssistantMessage;
+import com.dahuaboke.mpda.core.trace.memory.AssistantMessageWrapper;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class HumanNode implements NodeAction {
     }
 
     private AsyncGenerator<? extends NodeOutput> buildResponse(String key, String content, OverAllState state) {
-        ChatResponse chatResponse = new ChatResponse(List.of(new Generation(new AssistantMessage(content))));
+        ChatResponse chatResponse = new ChatResponse(List.of(new Generation(new AssistantMessageWrapper(content))));
         Flux<ChatResponse> just = Flux.just(chatResponse);
         return StreamingChatGenerator.builder()
                 .startingNode("humanNode")

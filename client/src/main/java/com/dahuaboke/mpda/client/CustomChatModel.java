@@ -78,7 +78,7 @@ public class CustomChatModel implements ChatModel {
                         return new ChatResponse(List.of());
                     }
 
-                    List<Generation> generations = List.of(new Generation(new AssistantMessage("")));
+                    List<Generation> generations = List.of(new Generation(new AssistantMessage(""))); // TODO 替换为wrapper包装类
                     ChatResponse chatResponse = new ChatResponse(generations);
 
                     observationContext.setResponse(chatResponse);
@@ -119,7 +119,7 @@ public class CustomChatModel implements ChatModel {
             // the function call handling logic.
             Flux<ChatResponse> chatResponse = executeFlux.switchMap(chatCompletion -> Mono.just(chatCompletion).map(chatCompletion2 -> {
                         try {
-                            List<Generation> generations = List.of(new Generation(new AssistantMessage("")));
+                            List<Generation> generations = List.of(new Generation(new AssistantMessage(""))); // TODO 替换为wrapper包装类
                             return new ChatResponse(generations);
                         } catch (Exception e) {
                             logger.error("Error processing chat completion", e);
@@ -204,7 +204,7 @@ public class CustomChatModel implements ChatModel {
                 : choice.message()
                 .toolCalls()
                 .stream()
-                .map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function",
+                .map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function", // TODO 替换为wrapper包装类
                         toolCall.function().name(), toolCall.function().arguments()))
                 .toList();
 
@@ -235,7 +235,7 @@ public class CustomChatModel implements ChatModel {
             generationMetadataBuilder.metadata("logprobs", choice.logprobs());
         }
 
-        var assistantMessage = new AssistantMessage(textContent, metadata, toolCalls, media);
+        var assistantMessage = new AssistantMessage(textContent, metadata, toolCalls, media); // TODO 替换为wrapper包装类
         return new Generation(assistantMessage, generationMetadataBuilder.build());
     }
 }

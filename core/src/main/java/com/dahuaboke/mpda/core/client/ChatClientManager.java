@@ -41,14 +41,15 @@ public class ChatClientManager {
                 .build();
     }
 
-    public LlmResponse call(String conversationId, String sceneId, String prompt, String query, List<ToolCallback> tools) {
-        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, tools);
+    public LlmResponse call(String conversationId, String sceneId, String prompt, String query, List<ToolCallback> tools, List<String> sceneMerge) {
+        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, tools, sceneMerge);
         ChatResponse chatResponse = spec.call().chatResponse();
         return new LlmResponse(chatResponse);
     }
 
-    public StreamLlmResponse stream(String conversationId, String sceneId, String prompt, String query, String key, OverAllState state, String nodeName) {
-        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, null);
+    public StreamLlmResponse stream(String conversationId, String sceneId, String prompt, String query, String key
+            , OverAllState state, String nodeName, List<String> sceneMerge) {
+        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, null, sceneMerge);
         Flux<ChatResponse> chatResponseFlux = spec.stream().chatResponse();
         AsyncGenerator<? extends NodeOutput> output = StreamingChatGenerator.builder()
                 .startingNode(nodeName)
@@ -60,9 +61,9 @@ public class ChatClientManager {
     }
 
     private ChatClient.ChatClientRequestSpec buildChatClientRequestSpec(String conversationId, String sceneId, String prompt
-            , String query, List<ToolCallback> tools) {
+            , String query, List<ToolCallback> tools, List<String> sceneMerge) {
         ChatClient.ChatClientRequestSpec spec = chatClient.prompt(prompt).user(query);
-        List<Message> memory = traceManager.getMemory(conversationId, sceneId);
+        List<Message> memory = traceManager.getMemory(conversationId, sceneId, sceneMerge);
         if (!CollectionUtils.isEmpty(memory)) {
             spec.messages(memory);
         }

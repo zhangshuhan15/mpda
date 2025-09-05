@@ -14,4 +14,6 @@ public class Constants {
 
     public static final String SCENE_ID = "______sceneId______";
 
+    public static final String SCENE_MERGE = "______sceneMerge______";
+
 }

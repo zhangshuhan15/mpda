@@ -91,8 +91,7 @@ public class ComparisonGraph extends AbstractGraph {
         attribute.put(Constants.TOOLS, List.of("comparisonTool"));
         comparisonPrompt.changePrompt("guide");
         try {
-            AsyncGenerator<NodeOutput> generator = this.compiledGraph.stream(attribute,
-                    RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
+            AsyncGenerator<NodeOutput> generator = this.compiledGraph.stream(attribute, RunnableConfig.builder().build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);

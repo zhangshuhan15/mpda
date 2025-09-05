@@ -33,16 +33,19 @@ public class SceneManager implements BeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof Scene scene) {
+            SceneWrapper wrapper;
             if (scene.parent() == null) {
                 if (rootWrapper != null) {
                     throw new MpdaIllegalConfigException("Root scene only one");
                 }
                 rootWrapper = buildWrapper(scene);
-                sceneWrappers.put(scene.getClass().getSimpleName(), rootWrapper);
+                wrapper = rootWrapper;
             } else {
                 scenes.add(scene);
-                sceneWrappers.put(scene.getClass().getSimpleName(), buildWrapper(scene));
+                wrapper = buildWrapper(scene);
             }
+            sceneWrappers.put(scene.getClass().getSimpleName(), wrapper);
+            traceManager.addSceneMapper(scene.getClass(), wrapper.getSceneId());
         }
         if (bean instanceof TraceManager traceManager) {
             this.traceManager = traceManager;

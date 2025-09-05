@@ -7,8 +7,8 @@ import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.trace.TraceManager;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import com.dahuaboke.mpda.core.trace.memory.AssistantMessageWrapper;
+import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
 import reactor.core.publisher.Flux;
 
 import java.util.HashMap;
@@ -45,9 +45,9 @@ public abstract class AbstractChain implements Chain {
     @Override
     public String slide(String query) throws MpdaRuntimeException {
         prepare(query);
-        graph.addMemory(UserMessage.builder().text(query).build());
+        graph.addMemory(UserMessageWrapper.builder().text(query).build());
         String reply = executeGraph();
-        graph.addMemory(new AssistantMessage(reply));
+        graph.addMemory(new AssistantMessageWrapper(reply));
         return reply;
     }
 
@@ -56,14 +56,14 @@ public abstract class AbstractChain implements Chain {
         String conversationId = traceManager.getConversationId();
         String sceneId = traceManager.getSceneId();
         prepare(query);
-        graph.addMemory(UserMessage.builder().text(query).build());
+        graph.addMemory(UserMessageWrapper.builder().text(query).build());
         Flux<String> reply = executeGraphAsync();
         StringBuilder replyMessage = new StringBuilder();
         reply.subscribe(replyTemp -> replyMessage.append(replyTemp)
                 , error -> {
                     // TODO
                 }
-                , () -> graph.addMemory(conversationId, sceneId, new AssistantMessage(replyMessage.toString())));
+                , () -> graph.addMemory(conversationId, sceneId, new AssistantMessageWrapper(replyMessage.toString())));
         return reply;
     }
 
@@ -77,5 +77,6 @@ public abstract class AbstractChain implements Chain {
         attribute.put(Constants.QUERY, query);
         attribute.put(Constants.CONVERSATION_ID, traceManager.getConversationId());
         attribute.put(Constants.SCENE_ID, traceManager.getSceneId());
+        traceManager.setAttribute(attribute);
     }
 }

@@ -33,6 +33,10 @@ public class SceneWrapper {
         this.description = description;
     }
 
+    public String getSceneId() {
+        return sceneId;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
