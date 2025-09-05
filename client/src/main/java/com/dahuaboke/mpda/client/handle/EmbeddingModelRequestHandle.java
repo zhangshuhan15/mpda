@@ -7,24 +7,22 @@ import com.dahuaboke.mpda.client.entity.TxBodyReq;
 import com.dahuaboke.mpda.client.entity.TxHeaderReq;
 import com.dahuaboke.mpda.client.entity.req.C014007Req;
 import com.dahuaboke.mpda.client.entity.resp.C014007Resp;
+import com.dahuaboke.mpda.client.utils.CommonHeaderUtils;
 
 /**
- * @Desc: 向量接口发送
+ * @Desc: 向量模型接口发送
  * @Author：zhh
  * @Date：2025/9/5 9:39
  */
-public class EmbeddingRequestHandle {
+public class EmbeddingModelRequestHandle {
 
-    private  final CustomClient customCommonClient;
+    private final CustomClient customCommonClient;
 
-    private  final String sendSysNo ;
+    private final CoreClientProperties coreClientProperties;
 
-    private  final String targetSysNo ;
-
-    public EmbeddingRequestHandle(CustomClient customCommonClient, String sendSysNo, String targetSysNo) {
+    public EmbeddingModelRequestHandle(CustomClient customCommonClient, CoreClientProperties coreClientProperties) {
         this.customCommonClient = customCommonClient;
-        this.sendSysNo = sendSysNo;
-        this.targetSysNo = targetSysNo;
+        this.coreClientProperties = coreClientProperties;
     }
 
     /**
@@ -35,7 +33,9 @@ public class EmbeddingRequestHandle {
      */
     public float[] sendC014007(String text) {
         CommonReq<C014007Req> bodyReq = new CommonReq<>();
-        bodyReq.setTxHeader(commonHeaderBuild());
+        TxHeaderReq headerReq = CommonHeaderUtils.build(coreClientProperties.getSendSysNo(),
+                coreClientProperties.getTargetSysNo(), RagConstant.RAG_V1_C014007);
+        bodyReq.setTxHeader(headerReq);
 
         TxBodyReq<C014007Req> txBodyReq = new TxBodyReq<>();
         C014007Req c014007Req = new C014007Req();
@@ -49,18 +49,5 @@ public class EmbeddingRequestHandle {
         return resp.getVector();
     }
 
-    /**
-     * 通用头构建
-     *
-     * @return header
-     */
-    private TxHeaderReq commonHeaderBuild() {
-        TxHeaderReq txHeaderReq = new TxHeaderReq();
-        txHeaderReq.setStartSysOrCmptNo(sendSysNo);
-        txHeaderReq.setSendSysOrCmptNo(sendSysNo);
-        txHeaderReq.setTargetSysOrCmptNo(targetSysNo);
-        txHeaderReq.setServNo(RagConstant.RAG_V1_C014007);
-        //TODO 还需要全局流水号 ...
-        return txHeaderReq;
-    }
+
 }
