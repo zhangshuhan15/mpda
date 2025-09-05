@@ -1,7 +1,7 @@
 package com.dahuaboke.mpda.client;
 
 
-import com.dahuaboke.mpda.client.handle.EmbeddingRequestHandle;
+import com.dahuaboke.mpda.client.handle.EmbeddingModelRequestHandle;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.AbstractEmbeddingModel;
 import org.springframework.ai.embedding.Embedding;
@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class CustomEmbeddingModel extends AbstractEmbeddingModel {
 
-    private final EmbeddingRequestHandle embeddingRequestHandle;
+    private final EmbeddingModelRequestHandle embeddingRequestHandle;
 
-    public CustomEmbeddingModel(EmbeddingRequestHandle embeddingRequestHandle) {
+    public CustomEmbeddingModel(EmbeddingModelRequestHandle embeddingRequestHandle) {
         this.embeddingRequestHandle = embeddingRequestHandle;
     }
 
@@ -30,7 +30,7 @@ public class CustomEmbeddingModel extends AbstractEmbeddingModel {
         ArrayList<Embedding> embeddings = new ArrayList<>();
         for (int i = 0; i < instructions.size(); i++) {
             float[] floats = embeddingRequestHandle.sendC014007(instructions.get(i));
-            embeddings.add(new Embedding(floats,i));
+            embeddings.add(new Embedding(floats, i));
         }
         return new EmbeddingResponse(embeddings);
     }

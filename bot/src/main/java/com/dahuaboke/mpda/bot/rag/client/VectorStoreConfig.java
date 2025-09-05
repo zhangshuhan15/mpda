@@ -2,6 +2,7 @@ package com.dahuaboke.mpda.bot.rag.client;
 
 import com.dahuaboke.mpda.bot.rag.constants.FundConstant;
 import com.dahuaboke.mpda.client.CustomVectorStore;
+import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Component;
 public class VectorStoreConfig {
 
     @Bean
-    public CustomVectorStore customVectorStore(EmbeddingModel embeddingModel){
-        return CustomVectorStore.builder(embeddingModel)
+    public CustomVectorStore customVectorStore(EmbeddingModel embeddingModel, VectorStoreRequestHandle vectorStoreRequestHandle){
+        return CustomVectorStore.builder(embeddingModel,vectorStoreRequestHandle)
                 .collectionName(FundConstant.INDEX_NAME)
                 .vectorFieldName(FundConstant.EMBEDDING)
                 .sendSysNo(FundConstant.LC_SYSTEM)

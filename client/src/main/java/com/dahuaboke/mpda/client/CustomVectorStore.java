@@ -5,7 +5,7 @@ import com.dahuaboke.mpda.client.convert.DocumentConverter;
 import com.dahuaboke.mpda.client.entity.req.C014006Req;
 import com.dahuaboke.mpda.client.entity.resp.C014001Resp;
 import com.dahuaboke.mpda.client.entity.resp.C014006Resp;
-import com.dahuaboke.mpda.client.handle.RagRequestHandle;
+import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -17,16 +17,12 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.milvus.MilvusVectorStore;
 import org.springframework.ai.vectorstore.observation.AbstractObservationVectorStore;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -41,45 +37,30 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
      */
     private String collectionName = "vector_store";
 
-    /**
-     * 发送方系统号
-     */
-    private String sendSysNo = "";
-
-    /**
-     * 接收方系统号
-     */
-    private String targetSysNo = "";
 
     /**
      * 需要向量查询的字段
      */
-    private  String vectorFieldName = "embedding";
+    private String vectorFieldName = "embedding";
 
     /**
      * 转换接口对象
      */
-    private  DocumentConverter converter;
+    private DocumentConverter converter;
 
 
     /**
      * 新核心RAG接口处理类
      */
-    private final RagRequestHandle ragRequestHandle;
+    private final VectorStoreRequestHandle vectorStoreRequestHandle;
 
 
     public CustomVectorStore(Builder builder) {
         super(builder);
         this.collectionName = builder.collectionName;
-        this.sendSysNo = builder.sendSysNo;
-        this.targetSysNo = builder.targetSysNo;
         this.converter = builder.converter;
         this.vectorFieldName = builder.vectorFieldName;
-        Consumer<HttpHeaders> finalHeaders = (h) -> {
-            h.setContentType(MediaType.APPLICATION_JSON);
-        };
-        RestClient restClient = RestClient.builder().defaultHeaders(finalHeaders).build();
-        ragRequestHandle = new RagRequestHandle(new CustomClient(restClient,null), sendSysNo, targetSysNo);
+        this.vectorStoreRequestHandle = builder.vectorStoreRequestHandle;
     }
 
     @Override
@@ -94,9 +75,9 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
             List<float[]> embeddings = this.embeddingModel.embed(documents, EmbeddingOptionsBuilder.builder().build(),
                     this.batchingStrategy);
 
-            txEntity = ragRequestHandle.sendC014001(collectionName, documents);
+            txEntity = vectorStoreRequestHandle.sendC014001(collectionName, documents);
         } else {
-            txEntity = ragRequestHandle.sendC014001(collectionName, converter.requestConvert(documents, embeddingModel));
+            txEntity = vectorStoreRequestHandle.sendC014001(collectionName, converter.requestConvert(documents, embeddingModel));
         }
         List<String> failedInsertList = txEntity.getFailedInsertList();
         if (!failedInsertList.isEmpty()) {
@@ -119,19 +100,18 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         float[] embedding = embeddingModel.embed(query);
         Filter.Expression filterExpression = request.getFilterExpression();
         Map<String, Object> conditionMap = new HashMap<>();
-        extractConditions(filterExpression,conditionMap);
+        extractConditions(filterExpression, conditionMap);
 
         C014006Req c014006Req = new C014006Req();
         c014006Req.setVector(embedding);
         c014006Req.setConditionMap(conditionMap);
-        c014006Req.setSystemNo(sendSysNo);
         c014006Req.setIndexName(collectionName);
         c014006Req.setVectorFieldName(vectorFieldName);
         c014006Req.setTopK(topK);
         c014006Req.setNumCandidates(topK);
         c014006Req.setSize(topK);
 
-        C014006Resp<LinkedHashMap<String, Object>> c014006Resp = ragRequestHandle.sendC014006(c014006Req);
+        C014006Resp<LinkedHashMap<String, Object>> c014006Resp = vectorStoreRequestHandle.sendC014006(c014006Req);
         List<LinkedHashMap<String, Object>> resultMap = c014006Resp.getResultMap();
         List<Document> documents;
         if (converter == null) {
@@ -191,7 +171,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
                 // 值
                 Object valueObj = value.value();
 
-                conditionMap.put(keyName , valueObj);
+                conditionMap.put(keyName, valueObj);
             }
         }
     }
@@ -202,40 +182,29 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         return VectorStoreObservationContext.builder(VectorStoreProvider.ELASTICSEARCH.value(), operationName).collectionName(this.collectionName).dimensions(this.embeddingModel.dimensions());
     }
 
-    public static Builder builder(EmbeddingModel embeddingModel) {
-        return new Builder(embeddingModel);
+    public static Builder builder(EmbeddingModel embeddingModel, VectorStoreRequestHandle vectorStoreRequestHandle) {
+        return new Builder(embeddingModel, vectorStoreRequestHandle);
     }
 
     public static class Builder extends AbstractVectorStoreBuilder<MilvusVectorStore.Builder> {
 
         private String collectionName = "vector_store";
 
-        private String sendSysNo = "";
-
-        private String targetSysNo = "";
-
         private String vectorFieldName = "embedding";
 
         private DocumentConverter converter;
 
+        private VectorStoreRequestHandle vectorStoreRequestHandle;
 
-        private Builder(EmbeddingModel embeddingModel) {
+
+        private Builder(EmbeddingModel embeddingModel, VectorStoreRequestHandle vectorStoreRequestHandle) {
             super(embeddingModel);
+            this.vectorStoreRequestHandle = vectorStoreRequestHandle;
 
         }
 
         public Builder collectionName(String collectionName) {
             this.collectionName = collectionName;
-            return this;
-        }
-
-        public Builder sendSysNo(String sendSysNo) {
-            this.sendSysNo = sendSysNo;
-            return this;
-        }
-
-        public Builder targetSysNo(String targetSysNo) {
-            this.targetSysNo = targetSysNo;
             return this;
         }
 
