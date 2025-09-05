@@ -5,7 +5,7 @@ package com.dahuaboke.mpda.client.entity;
  * @Author：zhh
  * @Date：2025/8/29 17:32
  */
-public class TxBodyReq<E> {
+public class TxBodyReq<T> {
 
     /**
      * 企业级通用域（必送）
@@ -16,16 +16,8 @@ public class TxBodyReq<E> {
     /**
      * 实体域
      */
-    private E txEntity;
+    private T txEntity;
 
-
-    public TxBodyReq(TxComni txComni, E txEntity) {
-        this.txComni = txComni;
-        this.txEntity = txEntity;
-    }
-
-    public TxBodyReq() {
-    }
 
     public TxComni getTxComni() {
         return txComni;
@@ -35,11 +27,11 @@ public class TxBodyReq<E> {
         this.txComni = txComni;
     }
 
-    public E getTxEntity() {
+    public T getTxEntity() {
         return txEntity;
     }
 
-    public void setTxEntity(E txEntity) {
+    public void setTxEntity(T txEntity) {
         this.txEntity = txEntity;
     }
 

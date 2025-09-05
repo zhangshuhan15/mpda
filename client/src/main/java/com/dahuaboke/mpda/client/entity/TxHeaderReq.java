@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class TxHeaderReq {
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
     /**
      * 发起系统或组件编码  11填调用方系统号
@@ -41,13 +41,13 @@ public class TxHeaderReq {
     /**
      * 交易发起时间 YYYYMMDDHHmmssSSS
      */
-    private String txStartTime = sdf.format(new Date());
+    private String txStartTime = SDF.format(new Date());
 
     /**
      * 交易发送时间
      * YYYYMMDDHHmmssSSS
      */
-    private String txSendTime = sdf.format(new Date());
+    private String txSendTime = SDF.format(new Date());
 
     /**
      * 报文总长度

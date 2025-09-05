@@ -6,17 +6,16 @@ package com.dahuaboke.mpda.client.entity;
  * @Author：zhh
  * @Date：2025/8/29 17:32
  */
-public class CommonResp<T> {
+public class CommonResp<R> {
 
     private TxHeaderResp txHeader;
 
-    private T txBody;
-
+    private TxBodyResp<R> txBody;
 
     public CommonResp() {
     }
 
-    public CommonResp(TxHeaderResp txHeader, T txBody) {
+    public CommonResp(TxHeaderResp txHeader, TxBodyResp<R> txBody) {
         this.txHeader = txHeader;
         this.txBody = txBody;
     }
@@ -29,12 +28,11 @@ public class CommonResp<T> {
         this.txHeader = txHeader;
     }
 
-    public T getTxBody() {
+    public TxBodyResp<R> getTxBody() {
         return txBody;
     }
 
-    public void setTxBody(T txBody) {
+    public void setTxBody(TxBodyResp<R> txBody) {
         this.txBody = txBody;
     }
-
 }

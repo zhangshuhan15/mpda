@@ -6,13 +6,13 @@ package com.dahuaboke.mpda.client.entity;
  * @Author：zhh
  * @Date：2025/8/29 17:32
  */
-public class CommonReq {
+public class CommonReq<T> {
 
     private TxHeaderReq txHeader;
 
-    private TxBodyReq txBody;
+    private TxBodyReq<T> txBody;
 
-    public CommonReq(TxHeaderReq txHeader, TxBodyReq txBody) {
+    public CommonReq(TxHeaderReq txHeader, TxBodyReq<T> txBody) {
         this.txHeader = txHeader;
         this.txBody = txBody;
     }
@@ -28,13 +28,12 @@ public class CommonReq {
         this.txHeader = txHeader;
     }
 
-    public TxBodyReq getTxBody() {
+    public TxBodyReq<T> getTxBody() {
         return txBody;
     }
 
-    public void setTxBody(TxBodyReq txBody) {
+    public void setTxBody(TxBodyReq<T> txBody) {
         this.txBody = txBody;
     }
-
 }
 
