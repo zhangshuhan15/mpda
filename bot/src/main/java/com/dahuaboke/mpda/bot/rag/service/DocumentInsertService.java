@@ -25,9 +25,9 @@ import java.util.Map;
  * @Date：2025/9/2 17:27
  */
 @Service
-public class PdfProcessingService {
+public class DocumentInsertService {
 
-    private static final Logger log = LoggerFactory.getLogger(PdfProcessingService.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentInsertService.class);
 
     @Autowired
     private ChatModel chatModel;

@@ -5,8 +5,11 @@ import com.dahuaboke.mpda.client.convert.DocumentConverter;
 import com.dahuaboke.mpda.client.entity.req.C014006Req;
 import com.dahuaboke.mpda.client.entity.resp.C014001Resp;
 import com.dahuaboke.mpda.client.entity.resp.C014006Resp;
+import com.dahuaboke.mpda.client.entity.resp.C014008Resp;
 import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingOptionsBuilder;
@@ -55,6 +58,8 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
     private final VectorStoreRequestHandle vectorStoreRequestHandle;
 
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomVectorStore.class);
+
     public CustomVectorStore(Builder builder) {
         super(builder);
         this.collectionName = builder.collectionName;
@@ -87,7 +92,10 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
 
     @Override
     public void doDelete(@NotNull List<String> idList) {
-
+        C014008Resp c014008Resp = vectorStoreRequestHandle.sendC014008(collectionName, idList);
+        if (!c014008Resp.getFailedDelIdList().isEmpty()) {
+            logger.error("fail Ids is{}",c014008Resp.getFailedDelIdList());
+        }
     }
 
     @NotNull

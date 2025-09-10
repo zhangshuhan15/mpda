@@ -61,6 +61,11 @@ public class SceneManager implements BeanPostProcessor {
             SceneWrapper parentSceneWrapper = sceneWrappers.get(parentScene.getClass().getSimpleName());
             SceneWrapper childSceneWrapper = sceneWrappers.get(scene.getClass().getSimpleName());
             parentSceneWrapper.addChildWrapper(childSceneWrapper);
+            try {
+                childSceneWrapper.init();
+            } catch (MpdaGraphException e) {
+                e.printStackTrace(); //TODO
+            }
         });
     }
 
@@ -76,11 +81,6 @@ public class SceneManager implements BeanPostProcessor {
                 .prompt(scene.prompt())
                 .description(scene.description())
                 .build();
-        try {
-            wrapper.init();
-        } catch (MpdaGraphException e) {
-            e.printStackTrace(); //TODO
-        }
         return wrapper;
     }
 

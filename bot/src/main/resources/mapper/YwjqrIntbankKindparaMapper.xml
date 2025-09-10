@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dahuaboke.mpda.tools.product.dao.YwjqrIntbankKindparaMapper">
-    <resultMap id="BaseResultMap" type="com.dahuaboke.mpda.tools.product.entity.YwjqrIntbankKindpara">
+<mapper namespace="com.dahuaboke.mpda.bot.tools.dao.YwjqrIntbankKindparaMapper">
+    <resultMap id="BaseResultMap" type="com.dahuaboke.mpda.bot.tools.entity.YwjqrIntbankKindpara">
         <!--
           WARNING - @mbg.generated
         -->
@@ -142,8 +142,8 @@
     <delete id="deleteAll">
         delete from ywjqr_intbank_kindpara;
     </delete>
-    <select id="selectListFilter" resultType="com.dahuaboke.mpda.tools.product.entity.YwjqrIntbankKindpara"
-            parameterType="com.dahuaboke.mpda.tools.product.dto.FilterProdInfoReq">
+    <select id="selectListFilter" resultType="com.dahuaboke.mpda.bot.tools.entity.YwjqrIntbankKindpara"
+            parameterType="com.dahuaboke.mpda.bot.tools.dto.FilterProdInfoReq">
         select a.* from ywjqr_intbank_kindpara a , ywjqr_product b where a.fund_prodt_no = b.fund_code
         <if test="fundType != null and fundType.size() > 0">
             and a.fund_type in

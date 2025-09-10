@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
  * @Author：zhh
  * @Date：2025/9/5 10:37
  */
-@Component
-@ConfigurationProperties(prefix = "core.client")
+@ConfigurationProperties(prefix = "yc.core.client")
 public class ClientProperties {
 
     // 地址

@@ -23,11 +23,7 @@ spring:
             Authorization: "Bearer b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881"
         completionsPath: /v1/chat/completion
 
-milvus:
-  host: 20.198.118.210 # Milvus 服务地址（默认本地）
-  port: 19530 # Milvus gRPC 端口（默认19530）
-  collectionName: docs06 # 向量集合名称（不存在时会自动创建）
-  embeddingDimension: 1024  # 向量维度（必须与模型输出一致）
+
 
 rerank:
   base-url: http://20.200.25.216:8080
@@ -45,4 +41,4 @@ logging:
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
-  type-aliases-package: com.dahuaboke.mpda.tools.product.entity
+  type-aliases-package: com.dahuaboke.mpda.bot.tools.entity

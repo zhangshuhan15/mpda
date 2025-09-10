@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dahuaboke.mpda.tools.product.dao.FundProductMapper">
-    <resultMap id="BaseResultMap" type="com.dahuaboke.mpda.tools.product.entity.YwjqrProduct">
+<mapper namespace="com.dahuaboke.mpda.bot.tools.dao.FundProductMapper">
+    <resultMap id="BaseResultMap" type="com.dahuaboke.mpda.bot.tools.entity.YwjqrProduct">
         <!--
           WARNING - @mbg.generated
         -->
@@ -77,7 +77,7 @@
     </sql>
 
     <select id="selectByFundCode" parameterType="java.lang.String"
-            resultType="com.dahuaboke.mpda.tools.product.entity.YwjqrProduct">
+            resultType="com.dahuaboke.mpda.bot.tools.entity.YwjqrProduct">
         select
         <include refid="Base_Column_List"/>
         from ywjqr_product
