@@ -36,6 +36,6 @@ public class LlmNode implements NodeAction {
         List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).get();
         return Map.of(Constants.RESULT, chatClientManager.call(conversationId, sceneId, prompt, query, toolNames.stream().map(toolName ->
                 toolManager.getToolByName(toolName)
-        ).toList(),sceneMerge));
+        ).toList(), sceneMerge));
     }
 }

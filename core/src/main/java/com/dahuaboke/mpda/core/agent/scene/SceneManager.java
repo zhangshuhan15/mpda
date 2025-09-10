@@ -67,6 +67,13 @@ public class SceneManager implements BeanPostProcessor {
                 e.printStackTrace(); //TODO
             }
         });
+        sceneWrappers.values().stream().forEach(sceneWrapper -> {
+            try {
+                sceneWrapper.init();
+            } catch (MpdaGraphException e) {
+                e.printStackTrace(); //TODO
+            }
+        });
     }
 
     private SceneWrapper buildWrapper(Scene scene) {

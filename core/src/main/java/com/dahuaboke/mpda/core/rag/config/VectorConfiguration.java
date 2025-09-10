@@ -18,32 +18,31 @@ import org.springframework.context.annotation.ComponentScan;
  * @Date：2025/7/18 11:00
  */
 @AutoConfiguration
-@ComponentScan("com.dahuaboke.mpda.core")
 public class VectorConfiguration { // TODO 抽象向量库接口，满足pg、es、milvus、redis-stack等   rag能力为可关闭的，否则强依赖向量库配置
 
-    @Value("${milvus.host}")
-    private String host;
-
-    @Value("${milvus.port}")
-    private Integer port;
-
-    @Value("${milvus.collectionName}")
-    private String collectionName;
-
-    @Value("${milvus.embeddingDimension}")
-    private int embeddingDimension;
+//    @Value("${milvus.host}")
+//    private String host;
+//
+//    @Value("${milvus.port}")
+//    private Integer port;
+//
+//    @Value("${milvus.collectionName}")
+//    private String collectionName;
+//
+//    @Value("${milvus.embeddingDimension}")
+//    private int embeddingDimension;
 
     /**
      * 定义一个名为 milvusServiceClient 的Bean，用于创建并返回一个 MilvusServiceClient 实例。
      */
-    @Bean
-    public MilvusServiceClient milvusServiceClient() {
-        return new MilvusServiceClient(
-                ConnectParam.newBuilder()
-                        .withHost(host)
-                        .withPort(port)
-                        .build());
-    }
+//    @Bean
+//    public MilvusServiceClient milvusServiceClient() {
+//        return new MilvusServiceClient(
+//                ConnectParam.newBuilder()
+//                        .withHost(host)
+//                        .withPort(port)
+//                        .build());
+//    }
 
     /**
      * 用于创建并返回一个 VectorStore 实例。
@@ -56,16 +55,16 @@ public class VectorConfiguration { // TODO 抽象向量库接口，满足pg、es
      * batchingStrategy：使用 TokenCountBatchingStrategy 策略进行批量处理。
      * initializeSchema：设置为 true，表示在构建时初始化数据库模式。
      */
-    @Bean
-    public VectorStore vectorStore(MilvusServiceClient milvusClient, EmbeddingModel embeddingModel) {
-        return MilvusVectorStore.builder(milvusClient, embeddingModel)
-                .collectionName(collectionName)
-                .databaseName("default") // TODO 可配置
-                .embeddingDimension(embeddingDimension)
-                //.indexType(IndexType.IVF_FLAT)
-                // .metricType(MetricType.COSINE)
-                // .batchingStrategy(new TokenCountBatchingStrategy())
-                .initializeSchema(true)
-                .build();
-    }
+//    @Bean
+//    public VectorStore vectorStore(MilvusServiceClient milvusClient, EmbeddingModel embeddingModel) {
+//        return MilvusVectorStore.builder(milvusClient, embeddingModel)
+//                .collectionName(collectionName)
+//                .databaseName("default") // TODO 可配置
+//                .embeddingDimension(embeddingDimension)
+//                //.indexType(IndexType.IVF_FLAT)
+//                // .metricType(MetricType.COSINE)
+//                // .batchingStrategy(new TokenCountBatchingStrategy())
+//                .initializeSchema(true)
+//                .build();
+//    }
 }

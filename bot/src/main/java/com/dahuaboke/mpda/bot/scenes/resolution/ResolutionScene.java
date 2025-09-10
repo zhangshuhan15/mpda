@@ -1,7 +1,6 @@
 package com.dahuaboke.mpda.bot.scenes.resolution;
 
 
-import com.dahuaboke.mpda.core.agent.exception.MpdaInvocationException;
 import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
 import com.dahuaboke.mpda.core.agent.scene.Scene;
@@ -23,7 +22,7 @@ public class ResolutionScene implements Scene {
 
     @Override
     public String description() {
-        throw new MpdaInvocationException();
+        return null;
     }
 
     @Override
