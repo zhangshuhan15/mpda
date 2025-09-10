@@ -16,7 +16,6 @@ import java.util.List;
  * auth: dahua
  * time: 2025/9/1 16:29
  */
-@Component
 public class RerankHandler {
 
     private final RerankerClientManager rerankerClientManager;

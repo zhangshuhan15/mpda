@@ -7,7 +7,6 @@ import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaIllegalConfigException;
 import com.dahuaboke.mpda.core.trace.TraceManager;
 import com.dahuaboke.mpda.core.utils.SpringUtil;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
@@ -29,6 +28,7 @@ public class SceneManager implements BeanPostProcessor {
     private TraceManager traceManager;
     private List<Scene> scenes = new ArrayList<>();
     private Map<String, SceneWrapper> sceneWrappers = new HashMap<>();
+    private boolean isInit = false;
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
@@ -53,19 +53,13 @@ public class SceneManager implements BeanPostProcessor {
         return bean;
     }
 
-    @PostConstruct
-    public void init() {
+    public void lazyInit() {
         scenes.stream().forEach(scene -> {
             Class<? extends Scene> parent = scene.parent();
             Scene parentScene = SpringUtil.getBean(parent);
             SceneWrapper parentSceneWrapper = sceneWrappers.get(parentScene.getClass().getSimpleName());
             SceneWrapper childSceneWrapper = sceneWrappers.get(scene.getClass().getSimpleName());
             parentSceneWrapper.addChildWrapper(childSceneWrapper);
-            try {
-                childSceneWrapper.init();
-            } catch (MpdaGraphException e) {
-                e.printStackTrace(); //TODO
-            }
         });
         sceneWrappers.values().stream().forEach(sceneWrapper -> {
             try {
@@ -74,6 +68,7 @@ public class SceneManager implements BeanPostProcessor {
                 e.printStackTrace(); //TODO
             }
         });
+        isInit = true;
     }
 
     private SceneWrapper buildWrapper(Scene scene) {
@@ -92,9 +87,12 @@ public class SceneManager implements BeanPostProcessor {
     }
 
     public Flux<String> apply(String conversationId, String query) throws MpdaException {
+        if (!isInit) {
+            lazyInit();
+        }
         SceneWrapper runtimeWrapper = rootWrapper;
         while (!runtimeWrapper.isEnd()) {
-            runtimeWrapper = rootWrapper.next(conversationId, query);
+            runtimeWrapper = runtimeWrapper.next(conversationId, query);
         }
         return runtimeWrapper.apply(conversationId, query);
     }

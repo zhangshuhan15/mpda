@@ -5,11 +5,12 @@ import com.dahuaboke.mpda.core.agent.exception.MpdaException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
 import com.dahuaboke.mpda.core.trace.TraceManager;
+import org.apache.commons.collections4.CollectionUtils;
 import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class SceneWrapper {
     private final String sceneId = UUID.randomUUID().toString();
     private final TraceManager traceManager;
     private final Chain chain;
-    private List<SceneWrapper> childrenWrapper;
+    private Set<SceneWrapper> childrenWrapper;
     private AgentPrompt prompt;
     private String description;
 
@@ -43,13 +44,15 @@ public class SceneWrapper {
 
     public void addChildWrapper(SceneWrapper childWrapper) {
         if (childrenWrapper == null) {
-            childrenWrapper = new ArrayList<>();
+            childrenWrapper = new HashSet<>();
         }
         this.childrenWrapper.add(childWrapper);
     }
 
     public void init() throws MpdaGraphException {
-        prompt.build(childrenWrapper.stream().collect(Collectors.toMap(child -> child.sceneId, child -> child.description)));
+        if (CollectionUtils.isNotEmpty(childrenWrapper)) {
+            prompt.build(childrenWrapper.stream().collect(Collectors.toMap(child -> child.sceneId, child -> child.description)));
+        }
         this.chain.init();
     }
 

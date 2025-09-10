@@ -33,7 +33,7 @@ public class LlmNode implements NodeAction {
         List<String> toolNames = state.value(Constants.TOOLS, List.class).orElse(List.of());
         String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
         String sceneId = state.value(Constants.SCENE_ID, String.class).get();
-        List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).get();
+        List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).orElse(List.of());
         return Map.of(Constants.RESULT, chatClientManager.call(conversationId, sceneId, prompt, query, toolNames.stream().map(toolName ->
                 toolManager.getToolByName(toolName)
         ).toList(), sceneMerge));

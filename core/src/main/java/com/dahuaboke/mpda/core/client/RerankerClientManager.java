@@ -15,7 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.support.RetryTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestClient;
 
@@ -28,7 +27,6 @@ import java.util.function.Consumer;
  * auth: dahua
  * time: 2025/8/27 10:27
  */
-@Component
 public class RerankerClientManager {
 
     @Value("${rerank.base-url}")

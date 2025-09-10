@@ -12,6 +12,7 @@
         <module>bot</module>
         <module>core</module>
         <module>client</module>
+        <module>ai-code</module>
     </modules>
 
     <properties>

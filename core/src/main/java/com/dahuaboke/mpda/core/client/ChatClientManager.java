@@ -27,7 +27,6 @@ import java.util.Objects;
  * auth: dahua
  * time: 2025/8/21 10:20
  */
-@Component
 public class ChatClientManager {
 
     private final ChatClient chatClient;

@@ -28,7 +28,7 @@ public class StreamLlmNode implements NodeAction {
         String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
         String sceneId = state.value(Constants.SCENE_ID, String.class).get();
         String key = Constants.RESULT;
-        List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).get();
+        List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).orElse(List.of());
         return Map.of(key, chatClientManager.stream(conversationId, sceneId, prompt, query, key, state, "streamLlmNode", sceneMerge));
     }
 }

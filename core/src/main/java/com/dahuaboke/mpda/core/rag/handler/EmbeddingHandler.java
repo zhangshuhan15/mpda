@@ -12,7 +12,6 @@ import java.util.List;
  * auth: dahua
  * time: 2025/9/1 10:33
  */
-@Component
 public class EmbeddingHandler {
 
     private final VectorStore vectorStore;
