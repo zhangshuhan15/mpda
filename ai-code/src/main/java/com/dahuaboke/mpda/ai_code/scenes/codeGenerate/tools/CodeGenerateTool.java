@@ -37,16 +37,13 @@ public class CodeGenerateTool extends AbstractBaseTool<CodeGenerateTool.Input> {
 
     @Override
     public ToolResult execute(Input input) {
-        System.err.println("--------------------------------------");
-        System.err.println(input);
-        System.err.println("--------------------------------------");
         String filePath = input.path();
         boolean fileIfNotExists = createFileIfNotExists(filePath);
         if (!fileIfNotExists) {
             return ToolResult.error("文件生成失败", filePath);
         }
         String content = input.content();
-        try (PrintWriter printWriter = new PrintWriter(new FileWriter(filePath, true))) {
+        try (PrintWriter printWriter = new PrintWriter(new FileWriter(filePath, false))) {
             printWriter.print(content);
             return ToolResult.success("文件生成成功");
         } catch (IOException e) {
