@@ -14,6 +14,11 @@ import com.dahuaboke.mpda.core.rag.entity.FundFieldMapper;
 import com.dahuaboke.mpda.core.rag.handler.EmbeddingHandler;
 import com.dahuaboke.mpda.core.rag.handler.RerankHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
@@ -71,83 +76,75 @@ public class DocumentQueryService {
     /**
      * 处理单个产品
      */
-    public boolean processProduct(Map.Entry<String, String> productEntry) {
-        try {
-            // 初始化查询
-            Map<String, String> queryMap = initAllQuery();
+    private boolean processProduct(Map.Entry<String, String> productEntry)  {
+        // 初始化查询
+        Map<String, String> queryMap = initAllQuery();
 
-            String productCode = productEntry.getKey();
-            String productName = productEntry.getValue();
+        String productCode = productEntry.getKey();
+        String productName = productEntry.getValue();
 
-            log.debug("开始处理产品: {}", productName);
+        // 将模型结果封装到基金对象
+        FundFieldMapper mapper = new FundFieldMapper(FundProduct.class);
+        FundProduct fund = new FundProduct();
 
-            // 将模型结果封装到基金对象
-            FundFieldMapper mapper = new FundFieldMapper(FundProduct.class);
-            FundProduct fund = new FundProduct();
+        // 处理所有查询问题
+        for (Map.Entry<String, String> entry : queryMap.entrySet()) {
+            String question = entry.getKey();
+            String userQuery = "基于" + productCode + "产品代码," + productName + "的" + question;
+            String key = entry.getValue();
 
-            // 处理所有查询问题
-            for (Map.Entry<String, String> entry : queryMap.entrySet()) {
-                String question = entry.getKey();
-                String userQuery = "基于" + productCode + "产品代码," + productName + "的" + question;
-                String key = entry.getValue();
+            SearchRequest searchRequest = SearchRequest.builder()
+                    .topK(15)
+                    .query(userQuery)
+                    .similarityThreshold(0.25)
+                    .build();
 
-                try {
-                    SearchRequest searchRequest = SearchRequest.builder()
-                            .topK(15)
-                            .query(userQuery)
-                            .similarityThreshold(0.25)
-                            .build();
+            String content = chatClient.prompt()
+                    .advisors(QuestionAnswerAdvisor
+                            .builder()
+                            .keys(List.of(key))
+                            .productName(List.of(productName))
+                            .searchRequest(searchRequest)
+                            .searchHandler(searchHandler)
+                            .embeddingHandler(embeddingHandler)
+                            .docContextHandler(docContextHandler)
+                            .rerankHandler(rerankHandler)
+                            .sortHandler(sortHandler)
+                            .build())
+                    .user(userQuery)
+                    .call().content();
 
-                    String content = chatClient.prompt()
-                            .advisors(QuestionAnswerAdvisor
-                                    .builder()
-                                    .keys(List.of(key))
-                                    .productName(List.of(productName))
-                                    .searchRequest(searchRequest)
-                                    .searchHandler(searchHandler)
-                                    .embeddingHandler(embeddingHandler)
-                                    .docContextHandler(docContextHandler)
-                                    .rerankHandler(rerankHandler)
-                                    .sortHandler(sortHandler)
-                                    .build())
-                            .user(userQuery)
-                            .call().content();
+            String answer = content.split("『RESULT』")[1].split("『END』")[0].trim();
 
-                    String answer = content.split("『RESULT』")[1].split("『END』")[0].trim();
-
-                    // 单个字段设置
-                    mapper.setFieldByComment(fund, question, answer);
-
-                } catch (Exception e) {
-                    log.error("产品{} 对应的query{} 处理失败: {}", productName, userQuery, e.getMessage(), e);
-                }
+            // 单个字段设置
+            try {
+                mapper.setFieldByComment(fund, question, answer);
+            } catch (Exception e) {
+                log.debug("实体映射失败: ", e);
+                return false;
             }
 
-            // 获取基金分类
-            if (checkFundType(fund.getFundCode())) {
-                Map<String, String> map = FundClassifierUtil.classifyFund(fund);
-                String[] modelResult = callModel(fund);
-
-                // 封装对象
-                fund.setFundClassificationCode(map.get("final_category"));
-                fund.setFundClassificationReasonCode(map.get("reason"));
-                fund.setFundClassificationModel(modelResult[0]);
-                fund.setFundClassificationReasonModel(modelResult[1]);
-            }
-
-            // 写入数据库
-            writeDb(fund);
-
-            log.debug("产品处理成功: {}", productName);
-            return true;
-        } catch (Exception e) {
-            log.error("产品处理失败: {}", productEntry.getValue(), e);
-            return false;
         }
+
+        // 获取基金分类
+        if (checkFundType(fund.getFundCode())) {
+            Map<String, String> map = FundClassifierUtil.classifyFund(fund);
+            String[] modelResult = callModel(fund);
+
+            // 封装对象
+            fund.setFundClassificationCode(map.get("final_category"));
+            fund.setFundClassificationReasonCode(map.get("reason"));
+            fund.setFundClassificationModel(modelResult[0]);
+            fund.setFundClassificationReasonModel(modelResult[1]);
+        }
+
+        // 写入数据库
+        writeDb(fund);
+        return true;
     }
 
     /**
-     * 批量处理产品
+     * 观测处理产品
      */
     public void processProducts(Map<String, String> productMap) {
         // 转换为列表处理
@@ -169,7 +166,7 @@ public class DocumentQueryService {
         return fundFieldMapper.getQuestionKeyWordMap();
     }
 
-    private void writeDb(FundProduct data) throws Exception {
+    private void writeDb(FundProduct data)  {
         YwjqrProduct ywjqrProduct = objectMapper.convertValue(data, YwjqrProduct.class);
         productToolHandler.fundProduct(ywjqrProduct);
     }
