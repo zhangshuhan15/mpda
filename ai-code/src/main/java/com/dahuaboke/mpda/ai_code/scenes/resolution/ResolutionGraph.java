@@ -14,6 +14,7 @@ import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.node.LlmNode;
+import org.springframework.ai.chat.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -64,5 +65,13 @@ public class ResolutionGraph extends AbstractGraph {
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
         }
+    }
+
+    @Override
+    public void addMemory(Message message) {
+    }
+
+    @Override
+    public void addMemory(String conversationId, String sceneId, Message message) {
     }
 }

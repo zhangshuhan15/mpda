@@ -99,25 +99,35 @@ public class TraceManager {
     }
 
     public List<Message> getMemory(String conversationId, String sceneId) {
-        return memoryManager.get(conversationId).get(sceneId);
+        if (memoryManager.containsKey(conversationId)) {
+            return memoryManager.get(conversationId).get(sceneId);
+        }
+        return List.of();
     }
 
     public List<Message> getMemory(String conversationId, String sceneId, List<String> sceneMerge) {
-        List<Message> messages = memoryManager.get(conversationId).get(sceneId);
-        if (!CollectionUtils.isEmpty(sceneMerge)) {
-            sceneMerge.stream().forEach(merge -> {
-                messages.addAll(getMemory(conversationId, merge));
-            });
+        if (memoryManager.containsKey(conversationId)) {
+            List<Message> messages = memoryManager.get(conversationId).get(sceneId);
+            if (messages == null) {
+                messages = new ArrayList<>();
+            }
+            if (!CollectionUtils.isEmpty(sceneMerge)) {
+                List<Message> finalMessages = messages;
+                sceneMerge.stream().forEach(merge -> {
+                    finalMessages.addAll(getMemory(conversationId, merge));
+                });
+            }
+            return messages.stream().sorted((m1, m2) -> {
+                if (m1 instanceof UserMessageWrapper user1 && m2 instanceof UserMessageWrapper user2) {
+                    return Long.valueOf(user1.getTime() - user2.getTime()).intValue();
+                }
+                if (m1 instanceof AssistantMessageWrapper assistant1 && m1 instanceof AssistantMessageWrapper assistant2) {
+                    return Long.valueOf(assistant1.getTime() - assistant2.getTime()).intValue();
+                }
+                return 0;
+            }).toList();
         }
-        return messages.stream().sorted((m1, m2) -> {
-            if (m1 instanceof UserMessageWrapper user1 && m2 instanceof UserMessageWrapper user2) {
-                return Long.valueOf(user1.getTime() - user2.getTime()).intValue();
-            }
-            if (m1 instanceof AssistantMessageWrapper assistant1 && m1 instanceof AssistantMessageWrapper assistant2) {
-                return Long.valueOf(assistant1.getTime() - assistant2.getTime()).intValue();
-            }
-            return 0;
-        }).toList();
+        return List.of();
     }
 
     public void addSceneMapper(Class<? extends Scene> clz, String sceneId) {

@@ -34,6 +34,7 @@ public abstract class AbstractChain implements Chain {
             put(Constants.QUERY, null);
             put(Constants.RESULT, null);
             put(Constants.TOOLS, null);
+            put(Constants.IS_TOOL_QUERY, null);
         }};
     }
 

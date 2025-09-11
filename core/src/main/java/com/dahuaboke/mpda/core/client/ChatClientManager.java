@@ -9,6 +9,9 @@ import com.dahuaboke.mpda.core.agent.prompt.CommonAgentPrompt;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.client.entity.StreamLlmResponse;
 import com.dahuaboke.mpda.core.trace.TraceManager;
+import com.dahuaboke.mpda.core.trace.memory.ToolResponseMessageWrapper;
+import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -16,9 +19,9 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallback;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,24 +34,26 @@ public class ChatClientManager {
 
     private final ChatClient chatClient;
     private final TraceManager traceManager;
+    private final ObjectMapper objectMapper;
 
-    public ChatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, TraceManager traceManager) {
+    public ChatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, TraceManager traceManager, ObjectMapper objectMapper) {
         this.traceManager = traceManager;
+        this.objectMapper = objectMapper;
         this.chatClient = ChatClient.builder(chatModel)
                 .defaultSystem(commonPrompt.system())
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
     }
 
-    public LlmResponse call(String conversationId, String sceneId, String prompt, String query, List<ToolCallback> tools, List<String> sceneMerge) {
-        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, tools, sceneMerge);
+    public LlmResponse call(String conversationId, String sceneId, String prompt, Object query, List<ToolCallback> tools, List<String> sceneMerge, Boolean isToolQuery) {
+        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, tools, sceneMerge, isToolQuery);
         ChatResponse chatResponse = spec.call().chatResponse();
         return new LlmResponse(chatResponse);
     }
 
-    public StreamLlmResponse stream(String conversationId, String sceneId, String prompt, String query, String key
-            , OverAllState state, String nodeName, List<String> sceneMerge) {
-        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, null, sceneMerge);
+    public StreamLlmResponse stream(String conversationId, String sceneId, String prompt, Object query, String key
+            , OverAllState state, String nodeName, List<String> sceneMerge, Boolean isToolQuery) {
+        ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, null, sceneMerge, isToolQuery);
         Flux<ChatResponse> chatResponseFlux = spec.stream().chatResponse();
         AsyncGenerator<? extends NodeOutput> output = StreamingChatGenerator.builder()
                 .startingNode(nodeName)
@@ -60,12 +65,21 @@ public class ChatClientManager {
     }
 
     private ChatClient.ChatClientRequestSpec buildChatClientRequestSpec(String conversationId, String sceneId, String prompt
-            , String query, List<ToolCallback> tools, List<String> sceneMerge) {
-        ChatClient.ChatClientRequestSpec spec = chatClient.prompt(prompt).user(query);
-        List<Message> memory = traceManager.getMemory(conversationId, sceneId, sceneMerge);
-        if (!CollectionUtils.isEmpty(memory)) {
-            spec.messages(memory);
+            , Object query, List<ToolCallback> tools, List<String> sceneMerge, Boolean isToolQuery) {
+        ChatClient.ChatClientRequestSpec spec = chatClient.prompt(prompt);
+        List<Message> messages = traceManager.getMemory(conversationId, sceneId, sceneMerge);
+        if (CollectionUtils.isEmpty(messages)) {
+            messages = List.of();
         }
+        Message message;
+        if (isToolQuery) {
+            message = (ToolResponseMessageWrapper) query;
+        } else {
+            message = UserMessageWrapper.builder().text((String) query).build();
+        }
+        List<Message> finalMessages = new ArrayList<>(messages);
+        finalMessages.add(message);
+        spec.messages(finalMessages);
         if (!CollectionUtils.isEmpty(tools)) {
             spec.toolCallbacks(tools);
         }

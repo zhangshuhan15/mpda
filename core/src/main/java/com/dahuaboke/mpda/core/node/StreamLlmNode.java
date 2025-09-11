@@ -24,11 +24,13 @@ public class StreamLlmNode implements NodeAction {
     @Override
     public Map<String, Object> apply(OverAllState state) throws Exception {
         String prompt = state.value(Constants.PROMPT, String.class).get();
-        String query = state.value(Constants.QUERY, String.class).get();
+        Object query = state.value(Constants.QUERY).get();
         String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
         String sceneId = state.value(Constants.SCENE_ID, String.class).get();
         String key = Constants.RESULT;
         List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).orElse(List.of());
-        return Map.of(key, chatClientManager.stream(conversationId, sceneId, prompt, query, key, state, "streamLlmNode", sceneMerge));
+        Boolean isToolQuery = state.value(Constants.IS_TOOL_QUERY, Boolean.class).orElse(false);
+        return Map.of(key, chatClientManager.stream(conversationId, sceneId, prompt, query, key, state, "streamLlmNode", sceneMerge, isToolQuery)
+                , Constants.IS_TOOL_QUERY, false);
     }
 }

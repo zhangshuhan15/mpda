@@ -29,13 +29,14 @@ public class LlmNode implements NodeAction {
     @Override
     public Map<String, Object> apply(OverAllState state) throws Exception {
         String prompt = state.value(Constants.PROMPT, String.class).get();
-        String query = state.value(Constants.QUERY, String.class).get();
+        Object query = state.value(Constants.QUERY).get();
         List<String> toolNames = state.value(Constants.TOOLS, List.class).orElse(List.of());
         String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
         String sceneId = state.value(Constants.SCENE_ID, String.class).get();
         List<String> sceneMerge = state.value(Constants.SCENE_MERGE, List.class).orElse(List.of());
+        Boolean isToolQuery = state.value(Constants.IS_TOOL_QUERY, Boolean.class).orElse(false);
         return Map.of(Constants.RESULT, chatClientManager.call(conversationId, sceneId, prompt, query, toolNames.stream().map(toolName ->
                 toolManager.getToolByName(toolName)
-        ).toList(), sceneMerge));
+        ).toList(), sceneMerge, isToolQuery), Constants.IS_TOOL_QUERY, false);
     }
 }

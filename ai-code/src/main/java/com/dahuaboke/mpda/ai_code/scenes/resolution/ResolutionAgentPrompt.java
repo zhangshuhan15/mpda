@@ -24,9 +24,11 @@ public class ResolutionAgentPrompt implements AgentPrompt {
                 3.仅返回对应的意向编号，注意不要添加任何其他符号
                 4.示例：
                     数据：
-                        abcdefg: 问候聊天
-                        1234567: 生成html代码
-                    返回：abcdefg
+                        | 编号                | 场景     |
+                        | ------------------- | -------- |
+                        | abcdefg-aaa-123321  | 测试场景1 |
+                        | 1234567-asdfsadf-as | 测试场景2 |
+                    返回编号：abcdefg-aaa-123321
             """;
     @Autowired
     private ObjectMapper objectMapper;
