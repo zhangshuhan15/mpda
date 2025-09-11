@@ -3,11 +3,8 @@ package com.dahuaboke.mpda.bot.rag.client;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * @Desc: 批量插入新核心接口数据库 映射对象
- * @Author：zhh
- * @Date：2025/9/04 17:32
- */
+
+
 public class FundEntity {
 
     /**
@@ -18,7 +15,7 @@ public class FundEntity {
     /**
      * 文本内容
      */
-    private String text;
+    private String content;
 
     /**
      * 文本嵌入向量
@@ -28,22 +25,22 @@ public class FundEntity {
     /**
      * 页码
      */
-    private int pageNumber;
+    private int page_number;
 
     /**
      * 文件名称
      */
-    private String fileName;
+    private String file_name;
 
     /**
      * 关键字
      */
-    private List<String> excerptKeyWords;
+    private List<String> excerpt_keywords;
 
     /**
      * 文件名关键字
      */
-    private List<String> fileNameKeyWords;
+    private List<String> file_name_keywords;
 
     /**
      * 分数
@@ -58,12 +55,12 @@ public class FundEntity {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public float[] getEmbedding() {
@@ -74,36 +71,36 @@ public class FundEntity {
         this.embedding = embedding;
     }
 
-    public int getPageNumber() {
-        return pageNumber;
+    public int getPage_number() {
+        return page_number;
     }
 
-    public void setPageNumber(int pageNumber) {
-        this.pageNumber = pageNumber;
+    public void setPage_number(int page_number) {
+        this.page_number = page_number;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFile_name() {
+        return file_name;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
     }
 
-    public List<String> getExcerptKeyWords() {
-        return excerptKeyWords;
+    public List<String> getExcerpt_keywords() {
+        return excerpt_keywords;
     }
 
-    public void setExcerptKeyWords(List<String> excerptKeyWords) {
-        this.excerptKeyWords = excerptKeyWords;
+    public void setExcerpt_keywords(List<String> excerpt_keywords) {
+        this.excerpt_keywords = excerpt_keywords;
     }
 
-    public List<String> getFileNameKeyWords() {
-        return fileNameKeyWords;
+    public List<String> getFile_name_keywords() {
+        return file_name_keywords;
     }
 
-    public void setFileNameKeyWords(List<String> fileNameKeyWords) {
-        this.fileNameKeyWords = fileNameKeyWords;
+    public void setFile_name_keywords(List<String> file_name_keywords) {
+        this.file_name_keywords = file_name_keywords;
     }
 
     public BigDecimal getScore() {
@@ -113,4 +110,5 @@ public class FundEntity {
     public void setScore(BigDecimal score) {
         this.score = score;
     }
+
 }

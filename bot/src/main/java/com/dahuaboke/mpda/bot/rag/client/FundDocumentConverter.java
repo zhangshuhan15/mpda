@@ -27,13 +27,13 @@ public class FundDocumentConverter implements DocumentConverter<FundEntity> {
             FundEntity fundEntity = new FundEntity();
             float[] embed = embeddingModel.embed(document.getText());
             fundEntity.setEmbedding(embed);
-            fundEntity.setText(document.getText());
+            fundEntity.setContent(document.getText());
             Map<String, Object> metadata = document.getMetadata();
 
-            fundEntity.setFileName((String) metadata.get("file_name"));
-            fundEntity.setPageNumber((int) metadata.get("page_number"));
-            fundEntity.setExcerptKeyWords((List<String>) metadata.get("excerpt_keywords"));
-            fundEntity.setFileNameKeyWords((List<String>) metadata.get("file_name_keywords"));
+            fundEntity.setFile_name((String) metadata.get("file_name"));
+            fundEntity.setPage_number((int) metadata.get("page_number"));
+            fundEntity.setExcerpt_keywords((List<String>) metadata.get("excerpt_keywords"));
+            fundEntity.setFile_name_keywords((List<String>) metadata.get("file_name_keywords"));
             fundEntitys.add(fundEntity);
         }
         return fundEntitys;

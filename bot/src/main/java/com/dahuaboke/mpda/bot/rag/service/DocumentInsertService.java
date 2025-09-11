@@ -41,35 +41,34 @@ public class DocumentInsertService {
     /**
      * 处理单个 PDF 资源
      */
-    public boolean processPdfResource(Resource resource) {
+    private boolean processPdfResource(Resource resource) {
+        String filename = resource.getFilename();
+        PdfDocumentConvert pdfDocumentConvert = new PdfDocumentConvert();
+        List<Document> docs;
         try {
-            String filename = resource.getFilename();
-            log.debug("开始处理PDF文件: {}", filename);
-            PdfDocumentConvert pdfDocumentConvert = new PdfDocumentConvert();
-            List<Document> docs = pdfDocumentConvert.readToDocuments(resource);
-
-            KeywordEnricher keywordEnricher = new KeywordEnricher(
-                    chatModel,
-                    ".基于文档内容,提取5个关键字",
-                    "『RESULT』",
-                    "『END』"
-            );
-            keywordEnricher.setPrompt(RagPrompt.DEFAULT_PROMPT_TEMPLATE
-                    .render(Map.of("keyWords", RagPrompt.FUND_KEYS)));
-
-            List<Document> keywordDocs = keywordEnricher.apply(docs);
-            vectorStore.add(keywordDocs);
-
-            log.debug("PDF文件处理成功: {}", filename);
-            return true;
-        } catch (Exception e) {
-            log.error("PDF文件处理失败: {}", resource.getFilename(), e);
+            docs = pdfDocumentConvert.readToDocuments(resource);
+        } catch (IOException e) {
+            log.error("文档解析失败{}",filename);
             return false;
         }
+
+        KeywordEnricher keywordEnricher = new KeywordEnricher(
+                chatModel,
+                ".基于文档内容,提取5个关键字",
+                "『RESULT』",
+                "『END』"
+        );
+        keywordEnricher.setPrompt(RagPrompt.DEFAULT_PROMPT_TEMPLATE
+                .render(Map.of("keyWords", RagPrompt.FUND_KEYS)));
+
+        List<Document> keywordDocs = keywordEnricher.apply(docs);
+        vectorStore.add(keywordDocs);
+
+        return true;
     }
 
     /**
-     * 批量处理 PDF 资源
+     * 观测处理 PDF 资源
      */
     public void processPdfResources(List<Resource> resources) {
         ProcessingMonitor.ProcessingResult<Resource> result = processingMonitor.processBatch(

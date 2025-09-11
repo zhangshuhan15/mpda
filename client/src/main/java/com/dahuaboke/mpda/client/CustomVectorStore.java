@@ -84,7 +84,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         } else {
             txEntity = vectorStoreRequestHandle.sendC014001(collectionName, converter.requestConvert(documents, embeddingModel));
         }
-        List<String> failedInsertList = txEntity.getFailedInsertList();
+        List<Map<String, Object>> failedInsertList = txEntity.getFailedInsertList();
         if (!failedInsertList.isEmpty()) {
             throw new RuntimeException("批量插入接口失败条数： " + failedInsertList);
         }
@@ -138,7 +138,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
             documents = converter.resultConvert(resultMap);
         }
         return documents.stream().filter(document -> {
-            Double score = (Double) document.getMetadata().get("score");
+            Double score =  document.getScore();
             return score >= similarityThreshold;
         }).collect(Collectors.toList());
 
