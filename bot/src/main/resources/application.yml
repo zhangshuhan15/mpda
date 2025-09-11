@@ -25,7 +25,10 @@ spring:
 
 
 
+
+
 rerank:
+  enabled: true
   base-url: http://20.200.25.216:8080
   api-key: b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881
   rerankPath: "/rerank"

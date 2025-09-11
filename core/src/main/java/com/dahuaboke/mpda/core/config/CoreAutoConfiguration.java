@@ -26,7 +26,7 @@ public class CoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(name = "reranker.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "rerank.enabled", havingValue = "true")
     public RerankerClientManager rerankerClientManager() {
         return new RerankerClientManager();
     }
