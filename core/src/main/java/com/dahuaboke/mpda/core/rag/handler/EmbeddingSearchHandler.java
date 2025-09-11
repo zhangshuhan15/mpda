@@ -4,7 +4,6 @@ package com.dahuaboke.mpda.core.rag.handler;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -12,11 +11,11 @@ import java.util.List;
  * auth: dahua
  * time: 2025/9/1 10:33
  */
-public class EmbeddingHandler {
+public class EmbeddingSearchHandler {
 
     private final VectorStore vectorStore;
 
-    public EmbeddingHandler(VectorStore vectorStore) {
+    public EmbeddingSearchHandler(VectorStore vectorStore) {
         this.vectorStore = vectorStore;
     }
 
