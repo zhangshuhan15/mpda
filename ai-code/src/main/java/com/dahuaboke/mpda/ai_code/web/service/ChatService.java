@@ -17,6 +17,6 @@ public class ChatService {
     private SceneManager sceneManager;
 
     public Flux<String> chat(String conversationId, String query) throws MpdaException {
-        return sceneManager.apply(conversationId, query);
+        return sceneManager.applyAsync(conversationId, query);
     }
 }

@@ -87,13 +87,13 @@ public class SceneManager implements BeanPostProcessor {
     }
 
     public String apply(String conversationId, String query) throws MpdaException {
-        SceneWrapper finalSceneWrapper = next(conversationId, query);
-        return finalSceneWrapper.apply(conversationId, query);
+        SceneWrapper sceneWrapper = next(conversationId, query);
+        return sceneWrapper.apply(conversationId, query);
     }
 
     public Flux<String> applyAsync(String conversationId, String query) throws MpdaException {
-        SceneWrapper finalSceneWrapper = next(conversationId, query);
-        return finalSceneWrapper.applyAsync(conversationId, query);
+        SceneWrapper sceneWrapper = next(conversationId, query);
+        return sceneWrapper.applyAsync(conversationId, query);
     }
 
     private SceneWrapper next(String conversationId, String query) throws MpdaException {
