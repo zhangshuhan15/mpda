@@ -2,6 +2,7 @@ package com.dahuaboke.mpda.client;
 
 import com.dahuaboke.mpda.client.constants.RagConstant;
 import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
+import com.dahuaboke.mpda.client.vector.CustomVectorStore;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

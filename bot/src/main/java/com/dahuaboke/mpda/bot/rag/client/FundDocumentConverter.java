@@ -46,7 +46,7 @@ public class FundDocumentConverter implements DocumentConverter<FundEntity> {
             BigDecimal score = (BigDecimal) map.get("score");
 
             String id = (String) map.get("id");
-            String text = (String) map.get("text");
+            String text = (String) map.get("content");
             return Document.builder()
                     .id(id)
                     .text(text)

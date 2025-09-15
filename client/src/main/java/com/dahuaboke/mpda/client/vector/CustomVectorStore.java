@@ -1,4 +1,4 @@
-package com.dahuaboke.mpda.client;
+package com.dahuaboke.mpda.client.vector;
 
 
 import com.dahuaboke.mpda.client.convert.DocumentConverter;
@@ -22,10 +22,7 @@ import org.springframework.ai.vectorstore.observation.AbstractObservationVectorS
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,10 +44,14 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
     private String vectorFieldName = "embedding";
 
     /**
-     * 转换接口对象
+     * 转换实体对象
      */
     private DocumentConverter converter;
 
+    /**
+     * 表达式转换器
+     */
+    public final EqAndFilterToMapConverter filterExpressionConverter = new EqAndFilterToMapConverter();
 
     /**
      * 新核心RAG接口处理类
@@ -70,7 +71,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
 
     @Override
     protected void doDelete(@NotNull Filter.Expression filterExpression) {
-        super.doDelete(filterExpression);
+
     }
 
     @Override
@@ -79,8 +80,8 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         if (converter == null) {
             List<float[]> embeddings = this.embeddingModel.embed(documents, EmbeddingOptionsBuilder.builder().build(),
                     this.batchingStrategy);
-
-            txEntity = vectorStoreRequestHandle.sendC014001(collectionName, documents);
+            ArrayList<HashMap<String, Object>> entities = getInsertBatchEntity(documents, embeddings);
+            txEntity = vectorStoreRequestHandle.sendC014001(collectionName, entities);
         } else {
             txEntity = vectorStoreRequestHandle.sendC014001(collectionName, converter.requestConvert(documents, embeddingModel));
         }
@@ -88,6 +89,21 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         if (!failedInsertList.isEmpty()) {
             throw new RuntimeException("批量插入接口失败条数： " + failedInsertList);
         }
+    }
+
+    private ArrayList<HashMap<String,Object>> getInsertBatchEntity(List<Document> documents, List<float[]> embeddings) {
+        ArrayList<HashMap<String,Object>> entities = new ArrayList<>();
+        for (int i = 0; i < documents.size(); i++) {
+            Document document = documents.get(i);
+            Map<String, Object> metadata = document.getMetadata();
+            HashMap<String, Object> entity = new HashMap<>(metadata);
+            String text = document.getText();
+            entity.put("text",text);
+            float[] embedding = embeddings.get(i);
+            entity.put("embedding",embedding);
+            entities.add(entity);
+        }
+        return entities;
     }
 
     @Override
@@ -107,8 +123,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
 
         float[] embedding = embeddingModel.embed(query);
         Filter.Expression filterExpression = request.getFilterExpression();
-        Map<String, Object> conditionMap = new HashMap<>();
-        extractConditions(filterExpression, conditionMap);
+        Map<String, Object> conditionMap = filterExpressionConverter.convertToMap(filterExpression);
 
         C014006Req c014006Req = new C014006Req();
         c014006Req.setVector(embedding);
@@ -145,44 +160,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
     }
 
 
-    private void extractConditions(Filter.Operand operand, Map<String, Object> conditionMap) {
-        if (operand instanceof Filter.Expression expression) {
-            // 处理NOT表达式
-            if (expression.type() == Filter.ExpressionType.NOT) {
-                extractConditions(expression.left(), conditionMap);
-                return;
-            }
-
-            // 处理逻辑组合（AND/OR）- 递归处理左右操作数
-            if (expression.type() == Filter.ExpressionType.AND ||
-                    expression.type() == Filter.ExpressionType.OR) {
-                extractConditions(expression.left(), conditionMap);
-                extractConditions(expression.right(), conditionMap);
-                return;
-            }
-
-            // 处理分组表达式
-            if (expression.left() instanceof Filter.Group group) {
-                extractConditions(group.content(), conditionMap);
-            }
-            if (expression.right() instanceof Filter.Group group) {
-                extractConditions(group.content(), conditionMap);
-            }
-
-            // 递归到叶子结点,取值
-            if (expression.left() instanceof Filter.Key key &&
-                    expression.right() instanceof Filter.Value value) {
-
-                // 键名
-                String keyName = key.key();
-
-                // 值
-                Object valueObj = value.value();
-
-                conditionMap.put(keyName, valueObj);
-            }
-        }
-    }
+    
 
     @NotNull
     @Override

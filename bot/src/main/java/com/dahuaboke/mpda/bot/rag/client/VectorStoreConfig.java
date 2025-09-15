@@ -1,7 +1,7 @@
 package com.dahuaboke.mpda.bot.rag.client;
 
 import com.dahuaboke.mpda.bot.rag.constants.FundConstant;
-import com.dahuaboke.mpda.client.CustomVectorStore;
+import com.dahuaboke.mpda.client.vector.CustomVectorStore;
 import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
