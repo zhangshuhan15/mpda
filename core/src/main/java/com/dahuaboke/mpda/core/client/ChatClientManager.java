@@ -9,15 +9,19 @@ import com.dahuaboke.mpda.core.agent.prompt.CommonAgentPrompt;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.client.entity.StreamLlmResponse;
 import com.dahuaboke.mpda.core.trace.TraceManager;
+import com.dahuaboke.mpda.core.trace.memory.AssistantMessageWrapper;
 import com.dahuaboke.mpda.core.trace.memory.ToolResponseMessageWrapper;
 import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
+import org.springframework.ai.chat.model.MessageAggregator;
 import org.springframework.ai.tool.ToolCallback;
 import reactor.core.publisher.Flux;
 
@@ -48,6 +52,7 @@ public class ChatClientManager {
     public LlmResponse call(String conversationId, String sceneId, String prompt, Object query, List<ToolCallback> tools, List<String> sceneMerge, Boolean isToolQuery) {
         ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, tools, sceneMerge, isToolQuery);
         ChatResponse chatResponse = spec.call().chatResponse();
+        after(conversationId,sceneId,chatResponse);
         return new LlmResponse(chatResponse);
     }
 
@@ -55,12 +60,16 @@ public class ChatClientManager {
             , OverAllState state, String nodeName, List<String> sceneMerge, Boolean isToolQuery) {
         ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, null, sceneMerge, isToolQuery);
         Flux<ChatResponse> chatResponseFlux = spec.stream().chatResponse();
+        Flux<ChatResponse> sharedFlux = chatResponseFlux.publish().autoConnect(2);
+        after(sharedFlux,conversationId,sceneId);
+
         AsyncGenerator<? extends NodeOutput> output = StreamingChatGenerator.builder()
                 .startingNode(nodeName)
                 .startingState(state)
                 .mapResult(response -> Map.of(key
                         , Objects.requireNonNull(response.getResult().getOutput().getText())))
-                .build(chatResponseFlux);
+                .build(sharedFlux);
+
         return new StreamLlmResponse(output);
     }
 
@@ -80,9 +89,32 @@ public class ChatClientManager {
         List<Message> finalMessages = new ArrayList<>(messages);
         finalMessages.add(message);
         spec.messages(finalMessages);
+        traceManager.addMemory(conversationId, sceneId, message);
         if (!CollectionUtils.isEmpty(tools)) {
             spec.toolCallbacks(tools);
         }
         return spec;
+    }
+
+    private void after (Flux<ChatResponse> chatResponseFlux, String conversationId ,String sceneId){
+        MessageAggregator messageAggregator = new MessageAggregator();
+
+        messageAggregator.aggregate(chatResponseFlux,
+                        (chatResponse -> after(conversationId,sceneId,chatResponse))
+                ).subscribe();
+
+    }
+
+
+    private void after(String conversationId, String sceneId,ChatResponse chatResponse){
+        List<AssistantMessage> assistantMessages = new ArrayList<>();
+        if (chatResponse != null) {
+            assistantMessages = chatResponse.getResults().stream().map(Generation::getOutput).toList();
+        }
+        for (AssistantMessage assistantMessage: assistantMessages){
+            AssistantMessageWrapper assistantMessageWrapper =
+                    new AssistantMessageWrapper(assistantMessage.getText(), assistantMessage.getMetadata(), assistantMessage.getToolCalls(), assistantMessage.getMedia());
+            traceManager.addMemory(conversationId, sceneId, assistantMessageWrapper);
+        }
     }
 }

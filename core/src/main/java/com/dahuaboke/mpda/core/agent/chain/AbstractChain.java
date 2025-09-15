@@ -7,8 +7,6 @@ import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.trace.TraceManager;
-import com.dahuaboke.mpda.core.trace.memory.AssistantMessageWrapper;
-import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
 import reactor.core.publisher.Flux;
 
 import java.util.HashMap;
@@ -46,26 +44,13 @@ public abstract class AbstractChain implements Chain {
     @Override
     public String slide(String query) throws MpdaRuntimeException {
         prepare(query);
-        graph.addMemory(UserMessageWrapper.builder().text(query).build());
-        String reply = executeGraph();
-        graph.addMemory(new AssistantMessageWrapper(reply));
-        return reply;
+        return executeGraph();
     }
 
     @Override
     public Flux<String> slideAsync(String query) throws MpdaRuntimeException {
-        String conversationId = traceManager.getConversationId();
-        String sceneId = traceManager.getSceneId();
         prepare(query);
-        graph.addMemory(UserMessageWrapper.builder().text(query).build());
-        Flux<String> reply = executeGraphAsync();
-        StringBuilder replyMessage = new StringBuilder();
-        reply.subscribe(replyTemp -> replyMessage.append(replyTemp)
-                , error -> {
-                    // TODO
-                }
-                , () -> graph.addMemory(conversationId, sceneId, new AssistantMessageWrapper(replyMessage.toString())));
-        return reply;
+        return executeGraphAsync();
     }
 
     abstract public String executeGraph() throws MpdaRuntimeException;
