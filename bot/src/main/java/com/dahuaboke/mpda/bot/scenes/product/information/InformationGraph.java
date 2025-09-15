@@ -3,7 +3,6 @@ package com.dahuaboke.mpda.bot.scenes.product.information;
 
 import com.alibaba.cloud.ai.graph.KeyStrategyFactory;
 import com.alibaba.cloud.ai.graph.NodeOutput;
-import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.StateGraph;
 import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
@@ -19,7 +18,6 @@ import com.dahuaboke.mpda.core.node.HumanNode;
 import com.dahuaboke.mpda.core.node.LlmNode;
 import com.dahuaboke.mpda.core.node.StreamLlmNode;
 import com.dahuaboke.mpda.core.node.ToolNode;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -81,7 +79,8 @@ public class InformationGraph extends AbstractGraph {
         attribute.put(Constants.TOOLS, List.of("informationTool"));
         informationPrompt.changePrompt("guide");
         try {
-            return this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, String.class).get();
+            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
+            return llmResponse.chatResponse().getResult().getOutput().getText();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
         }

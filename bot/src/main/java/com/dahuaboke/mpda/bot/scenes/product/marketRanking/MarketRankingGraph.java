@@ -12,6 +12,7 @@ import com.dahuaboke.mpda.bot.scenes.product.marketRanking.edge.MarketRankingDis
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
+import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.node.HumanNode;
 import com.dahuaboke.mpda.core.node.LlmNode;
@@ -78,7 +79,8 @@ public class MarketRankingGraph extends AbstractGraph {
         attribute.put(Constants.TOOLS, List.of("marketRankingTool"));
         marketRankingPrompt.changePrompt("guide");
         try {
-            return this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, String.class).get();
+            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
+            return llmResponse.chatResponse().getResult().getOutput().getText();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
         }
