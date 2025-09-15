@@ -19,7 +19,7 @@ public class UnknowWrapper extends SceneWrapper {
     }
 
     @Override
-    public Flux<String> apply(String conversationId, String query) throws MpdaException {
+    public Flux<String> applyAsync(String conversationId, String query) throws MpdaException {
         return Flux.just(reply);
     }
 }

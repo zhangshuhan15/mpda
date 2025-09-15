@@ -17,4 +17,8 @@ public class ToolResponseMessageWrapper extends ToolResponseMessage {
         super(toolResponseMessage.getResponses(), toolResponseMessage.getMetadata());
         this.time = System.currentTimeMillis();
     }
+
+    public long getTime() {
+        return time;
+    }
 }

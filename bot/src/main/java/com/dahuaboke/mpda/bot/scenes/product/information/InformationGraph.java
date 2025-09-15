@@ -9,6 +9,7 @@ import com.alibaba.cloud.ai.graph.async.AsyncGenerator;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
 import com.alibaba.cloud.ai.graph.exception.GraphStateException;
 import com.dahuaboke.mpda.bot.scenes.product.information.edge.InformationDispatcher;
+import com.dahuaboke.mpda.bot.scenes.product.marketRanking.MarketRankingScene;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
@@ -18,6 +19,7 @@ import com.dahuaboke.mpda.core.node.HumanNode;
 import com.dahuaboke.mpda.core.node.LlmNode;
 import com.dahuaboke.mpda.core.node.StreamLlmNode;
 import com.dahuaboke.mpda.core.node.ToolNode;
+import com.dahuaboke.mpda.core.trace.memory.MemoryMerge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -75,6 +77,7 @@ public class InformationGraph extends AbstractGraph {
     }
 
     @Override
+    @MemoryMerge(MarketRankingScene.class)
     public String execute(Map<String, Object> attribute) throws MpdaRuntimeException {
         attribute.put(Constants.TOOLS, List.of("informationTool"));
         informationPrompt.changePrompt("guide");
@@ -87,6 +90,7 @@ public class InformationGraph extends AbstractGraph {
     }
 
     @Override
+    @MemoryMerge(MarketRankingScene.class)
     public Flux<String> executeAsync(Map<String, Object> attribute) throws MpdaRuntimeException {
         attribute.put(Constants.TOOLS, List.of("informationTool"));
         informationPrompt.changePrompt("guide");

@@ -3,6 +3,7 @@ package com.dahuaboke.mpda.core.trace;
 
 import com.dahuaboke.mpda.core.agent.scene.Scene;
 import com.dahuaboke.mpda.core.trace.memory.AssistantMessageWrapper;
+import com.dahuaboke.mpda.core.trace.memory.ToolResponseMessageWrapper;
 import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.ai.chat.messages.Message;
@@ -123,6 +124,9 @@ public class TraceManager {
                 }
                 if (m1 instanceof AssistantMessageWrapper assistant1 && m1 instanceof AssistantMessageWrapper assistant2) {
                     return Long.valueOf(assistant1.getTime() - assistant2.getTime()).intValue();
+                }
+                if (m1 instanceof ToolResponseMessageWrapper tool1 && m1 instanceof ToolResponseMessageWrapper tool2) {
+                    return Long.valueOf(tool1.getTime() - tool2.getTime()).intValue();
                 }
                 return 0;
             }).toList();
