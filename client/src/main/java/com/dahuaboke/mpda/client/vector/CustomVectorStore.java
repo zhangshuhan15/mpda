@@ -17,7 +17,6 @@ import org.springframework.ai.observation.conventions.VectorStoreProvider;
 import org.springframework.ai.vectorstore.AbstractVectorStoreBuilder;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.Filter;
-import org.springframework.ai.vectorstore.milvus.MilvusVectorStore;
 import org.springframework.ai.vectorstore.observation.AbstractObservationVectorStore;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 
@@ -172,7 +171,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         return new Builder(embeddingModel, vectorStoreRequestHandle);
     }
 
-    public static class Builder extends AbstractVectorStoreBuilder<MilvusVectorStore.Builder> {
+    public static class Builder extends AbstractVectorStoreBuilder<CustomVectorStore.Builder> {
 
         private String collectionName = "vector_store";
 
