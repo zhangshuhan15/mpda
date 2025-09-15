@@ -1,2 +1,3 @@
 com.dahuaboke.mpda.client.ClientEmbeddingModelAutoConfiguration
 com.dahuaboke.mpda.client.ClientVectorStoreAutoConfiguration
+com.dahuaboke.mpda.client.ClientRerankModelAutoConfiguration

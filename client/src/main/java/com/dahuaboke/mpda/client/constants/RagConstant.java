@@ -13,6 +13,9 @@ public class RagConstant {
 
     public static final String EMBEDDING_MODEL = MODEL_PREFIX + ".embedding";
 
+    public static final String RERANK_MODEL = MODEL_PREFIX + ".rerank";
+
+
     public static final String VECTOR_STORE = MODEL_PREFIX + ".vector";
 
 

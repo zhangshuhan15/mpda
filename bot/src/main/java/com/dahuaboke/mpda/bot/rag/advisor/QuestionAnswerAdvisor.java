@@ -20,7 +20,7 @@ import com.dahuaboke.mpda.bot.rag.handler.DocContextHandler;
 import com.dahuaboke.mpda.bot.rag.handler.SearchHandler;
 import com.dahuaboke.mpda.bot.rag.handler.SortHandler;
 import com.dahuaboke.mpda.core.rag.handler.EmbeddingSearchHandler;
-import com.dahuaboke.mpda.core.rag.handler.RerankHandler;
+import com.dahuaboke.mpda.core.rag.rerank.Rerank;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
@@ -103,12 +103,12 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 
     private final DocContextHandler docContextHandler;
 
-    private final RerankHandler rerankHandler;
+    private final Rerank rerankHandler;
 
     public QuestionAnswerAdvisor(SearchRequest searchRequest, @Nullable PromptTemplate promptTemplate,
                                  @Nullable Scheduler scheduler, int order, List<String> productName, List<String> keys,
                                  SearchHandler searchHandler, EmbeddingSearchHandler embeddingSearchHandler, SortHandler sortHandler
-            , DocContextHandler docContextHandler, RerankHandler rerankHandler) {
+            , DocContextHandler docContextHandler, Rerank rerankHandler) {
         this.searchRequest = searchRequest;
         this.promptTemplate = promptTemplate != null ? promptTemplate : DEFAULT_PROMPT_TEMPLATE;
         this.scheduler = scheduler != null ? scheduler : BaseAdvisor.DEFAULT_SCHEDULER;
@@ -133,9 +133,8 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 
     @Override
     public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
-        MilvusSearchRequest milvusSearchRequest = (MilvusSearchRequest) searchRequest;
         //处理请求
-        List<Document> topKDocuments = processRequest(milvusSearchRequest);
+        List<Document> topKDocuments = processRequest(searchRequest);
         //封装返回
         String documentContext = topKDocuments == null ? ""
                 : topKDocuments.stream().map(Document::getText).collect(Collectors.joining(System.lineSeparator()));
@@ -220,7 +219,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
     }
 
     public static final class Builder {
-        private RerankHandler rerankHandler;
+        private Rerank rerankHandler;
         private DocContextHandler docContextHandler;
         private SortHandler sortHandler;
         private EmbeddingSearchHandler embeddingSearchHandler;
@@ -232,7 +231,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
         public Builder() {
         }
 
-        public Builder rerankHandler(RerankHandler rerankHandler) {
+        public Builder rerankHandler(Rerank rerankHandler) {
             this.rerankHandler = rerankHandler;
             return this;
         }

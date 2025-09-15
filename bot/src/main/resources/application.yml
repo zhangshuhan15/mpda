@@ -29,6 +29,7 @@ spring:
 yc:
   core:
     ai:
+      url: http://20.200.175.85:32011/online-service/rag/v1/
       send-sys-no: 99370000000
       target-sys-no: 99370000000
       embedding:
@@ -37,6 +38,8 @@ yc:
         enabled: true
         collection-name: pdf_inner_rule_index
         vector-field-name: embedding
+      rerank:
+        enabled: false
 
 
 rerank:

@@ -50,7 +50,7 @@ public class C014011Resp extends BaseResp {
         this.processData = processData;
     }
 
-    static class ProcessData {
+    public static class ProcessData {
 
         private double score;
 

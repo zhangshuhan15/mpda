@@ -12,7 +12,7 @@ import com.dahuaboke.mpda.bot.tools.ProductToolHandler;
 import com.dahuaboke.mpda.bot.tools.entity.YwjqrProduct;
 import com.dahuaboke.mpda.core.rag.entity.FundFieldMapper;
 import com.dahuaboke.mpda.core.rag.handler.EmbeddingSearchHandler;
-import com.dahuaboke.mpda.core.rag.handler.RerankHandler;
+import com.dahuaboke.mpda.core.rag.rerank.Rerank;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class DocumentQueryService {
     private DocContextHandler docContextHandler;
 
     @Autowired
-    private RerankHandler rerankHandler;
+    private Rerank rerankHandler;
 
     @Autowired
     private SortHandler sortHandler;
