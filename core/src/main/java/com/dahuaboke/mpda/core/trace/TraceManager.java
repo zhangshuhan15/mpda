@@ -138,15 +138,15 @@ public class TraceManager {
         return sceneMapper.get(clz);
     }
 
-    public void setAttribute(Map<String, Object> attribute) {
-        attributes.set(attribute);
-    }
-
     public Map<String, Object> getAttribute() {
         try {
             return attributes.get();
         } finally {
             attributes.remove();
         }
+    }
+
+    public void setAttribute(Map<String, Object> attribute) {
+        attributes.set(attribute);
     }
 }

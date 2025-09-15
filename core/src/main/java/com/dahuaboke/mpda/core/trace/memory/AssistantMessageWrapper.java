@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class AssistantMessageWrapper extends AssistantMessage {
 
-    private long time;
+    private final long time;
 
     public AssistantMessageWrapper(String content) {
         super(content);

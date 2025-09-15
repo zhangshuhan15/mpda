@@ -14,8 +14,8 @@ public interface Rerank {
 
     /**
      * @param searchRequest 查询对象
-     * @param documents 文档
-     * @param topK 返回个数
+     * @param documents     文档
+     * @param topK          返回个数
      * @return 筛选结果
      */
     List<Document> handler(SearchRequest searchRequest, List<Document> documents, int topK);

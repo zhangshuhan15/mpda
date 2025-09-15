@@ -47,7 +47,7 @@ public class CodeGenerateGraph extends AbstractGraph {
     private ToolNode toolNode;
 
     @Override
-    public StateGraph buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
+    public Map<Object, StateGraph> buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
         try {
             StateGraph stateGraph = new StateGraph(keyStrategyFactory)
                     .addNode("llm", node_async(llmNode))
@@ -59,7 +59,7 @@ public class CodeGenerateGraph extends AbstractGraph {
                             Map.of("go_human", "human", "go_tool", "tool"))
                     .addEdge("tool", "llm")
                     .addEdge("human", StateGraph.END);
-            return stateGraph;
+            return Map.of("default", stateGraph);
         } catch (GraphStateException e) {
             throw new MpdaGraphException(e);
         }
@@ -69,7 +69,7 @@ public class CodeGenerateGraph extends AbstractGraph {
     public String execute(Map<String, Object> attribute) throws MpdaRuntimeException {
         attribute.put(Constants.TOOLS, List.of("codeGenerateTool"));
         try {
-            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
+            LlmResponse llmResponse = getGraph("default").invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
             return llmResponse.chatResponse().getResult().getOutput().getText();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
@@ -80,7 +80,7 @@ public class CodeGenerateGraph extends AbstractGraph {
     public Flux<String> executeAsync(Map<String, Object> attribute) throws MpdaRuntimeException {
         attribute.put(Constants.TOOLS, List.of("codeGenerateTool"));
         try {
-            AsyncGenerator<NodeOutput> generator = this.compiledGraph.stream(attribute,
+            AsyncGenerator<NodeOutput> generator = getGraph("default").stream(attribute,
                     RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {

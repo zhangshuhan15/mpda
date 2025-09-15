@@ -7,6 +7,8 @@ import com.alibaba.cloud.ai.graph.exception.GraphStateException;
 import com.alibaba.cloud.ai.graph.state.strategy.ReplaceStrategy;
 import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
+import com.dahuaboke.mpda.core.agent.exception.MpdaIllegalArgumentException;
+import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.trace.TraceManager;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +29,19 @@ public abstract class AbstractGraph implements Graph {
 
     @Autowired
     protected TraceManager traceManager;
-    protected CompiledGraph compiledGraph;
+    private final Map<Object, CompiledGraph> graphs = new HashMap<>();
 
     @Override
     public void init(Set<String> keys) throws MpdaGraphException {
         KeyStrategyFactory keyStrategyFactory = buildKeyStrategyFactory(keys);
-        StateGraph stateGraph = buildGraph(keyStrategyFactory);
-        try {
-            this.compiledGraph = stateGraph.compile();
-        } catch (GraphStateException e) {
-            throw new MpdaGraphException("Compiled failed.", e);
-        }
+        Map<Object, StateGraph> graphMap = buildGraph(keyStrategyFactory);
+        graphMap.forEach((k, v) -> {
+            try {
+                graphs.put(k, v.compile());
+            } catch (GraphStateException e) {
+                throw new MpdaRuntimeException("Compiled graph failed.", e);
+            }
+        });
     }
 
     protected KeyStrategyFactory buildKeyStrategyFactory(Set<String> keys) {
@@ -58,7 +62,7 @@ public abstract class AbstractGraph implements Graph {
         traceManager.addMemory(conversationId, sceneId, message);
     }
 
-    abstract public StateGraph buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException;
+    abstract public Map<Object, StateGraph> buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException;
 
     protected Flux<String> changeFlux(AsyncGenerator<NodeOutput> generator) {
         Sinks.Many<String> sink = Sinks.many().multicast().onBackpressureBuffer();
@@ -77,5 +81,13 @@ public abstract class AbstractGraph implements Graph {
         return sink.asFlux() // TODO
                 .doOnCancel(() -> System.out.println("Client disconnected from stream"))
                 .doOnError(e -> System.err.println("Error occurred during streaming: " + e));
+    }
+
+    protected CompiledGraph getGraph(Object key) {
+        CompiledGraph compiledGraph = graphs.get(key);
+        if (compiledGraph == null) {
+            throw new MpdaIllegalArgumentException(key.toString());
+        }
+        return compiledGraph;
     }
 }

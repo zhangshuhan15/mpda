@@ -26,8 +26,8 @@ public class SceneManager implements BeanPostProcessor {
 
     private SceneWrapper rootWrapper;
     private TraceManager traceManager;
-    private List<Scene> scenes = new ArrayList<>();
-    private Map<String, SceneWrapper> sceneWrappers = new HashMap<>();
+    private final List<Scene> scenes = new ArrayList<>();
+    private final Map<String, SceneWrapper> sceneWrappers = new HashMap<>();
     private boolean isInit = false;
 
     @Override

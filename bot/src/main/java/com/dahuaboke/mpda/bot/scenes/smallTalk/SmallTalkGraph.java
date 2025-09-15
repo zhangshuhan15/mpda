@@ -11,8 +11,6 @@ import com.alibaba.cloud.ai.graph.exception.GraphStateException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
-import com.dahuaboke.mpda.core.client.entity.LlmResponse;
-import com.dahuaboke.mpda.core.client.entity.StreamLlmResponse;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.node.StreamLlmNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +31,14 @@ public class SmallTalkGraph extends AbstractGraph {
     @Autowired
     private StreamLlmNode streamLlmNode;
 
-    public StateGraph buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
+    public Map<Object, StateGraph> buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
         try {
             StateGraph stateGraph = new StateGraph(keyStrategyFactory)
                     .addNode("streamLlm", node_async(streamLlmNode))
 
                     .addEdge(StateGraph.START, "streamLlm")
                     .addEdge("streamLlm", StateGraph.END);
-            return stateGraph;
+            return Map.of("default", stateGraph);
         } catch (GraphStateException e) {
             throw new MpdaGraphException(e);
         }
@@ -49,7 +47,7 @@ public class SmallTalkGraph extends AbstractGraph {
     @Override
     public String execute(Map<String, Object> attribute) throws MpdaRuntimeException {
         try {
-            return this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, String.class).get();
+            return getGraph("default").invoke(attribute).get().value(Constants.RESULT, String.class).get();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
         }
@@ -58,7 +56,7 @@ public class SmallTalkGraph extends AbstractGraph {
     @Override
     public Flux<String> executeAsync(Map<String, Object> attribute) throws MpdaRuntimeException {
         try {
-            AsyncGenerator<NodeOutput> generator = this.compiledGraph.stream(attribute,
+            AsyncGenerator<NodeOutput> generator = getGraph("default").stream(attribute,
                     RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {

@@ -18,7 +18,7 @@ import java.util.Map;
 @Component
 public class BuyGraph extends AbstractGraph {
     @Override
-    public StateGraph buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
+    public Map<Object, StateGraph> buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
         return null;
     }
 

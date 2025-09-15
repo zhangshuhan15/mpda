@@ -78,11 +78,11 @@ public class ChatClientManager {
             message = (ToolResponseMessageWrapper) query;
         } else {
             message = UserMessageWrapper.builder().text((String) query).build();
+            traceManager.addMemory(conversationId, sceneId, message);
         }
         List<Message> finalMessages = new ArrayList<>(messages);
         finalMessages.add(message);
         spec.messages(finalMessages);
-        traceManager.addMemory(conversationId, sceneId, message);
         if (!CollectionUtils.isEmpty(tools)) {
             spec.toolCallbacks(tools);
         }

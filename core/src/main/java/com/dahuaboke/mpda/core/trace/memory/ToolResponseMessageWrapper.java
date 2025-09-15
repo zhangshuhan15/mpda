@@ -10,7 +10,7 @@ import org.springframework.ai.chat.messages.ToolResponseMessage;
  */
 public class ToolResponseMessageWrapper extends ToolResponseMessage {
 
-    private long time;
+    private final long time;
 
     @JsonCreator
     public ToolResponseMessageWrapper(ToolResponseMessage toolResponseMessage) {

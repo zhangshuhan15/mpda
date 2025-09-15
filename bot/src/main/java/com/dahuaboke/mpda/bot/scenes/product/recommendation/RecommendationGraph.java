@@ -54,7 +54,7 @@ public class RecommendationGraph extends AbstractGraph {
     private RecommendationAgentPrompt recommendationPrompt;
 
     @Override
-    public StateGraph buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
+    public Map<Object, StateGraph> buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
         try {
             StateGraph stateGraph = new StateGraph(keyStrategyFactory)
                     .addNode("llm", node_async(llmNode))
@@ -68,7 +68,7 @@ public class RecommendationGraph extends AbstractGraph {
                     .addEdge("tool", "streamLlm")
                     .addEdge("human", StateGraph.END)
                     .addEdge("streamLlm", StateGraph.END);
-            return stateGraph;
+            return Map.of("default", stateGraph);
         } catch (GraphStateException e) {
             throw new MpdaGraphException(e);
         }
@@ -79,7 +79,7 @@ public class RecommendationGraph extends AbstractGraph {
         attribute.put(Constants.TOOLS, List.of("recommendationTool"));
         recommendationPrompt.changePrompt("guide");
         try {
-            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
+            LlmResponse llmResponse = getGraph("default").invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
             return llmResponse.chatResponse().getResult().getOutput().getText();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
@@ -91,7 +91,7 @@ public class RecommendationGraph extends AbstractGraph {
         attribute.put(Constants.TOOLS, List.of("recommendationTool"));
         recommendationPrompt.changePrompt("guide");
         try {
-            AsyncGenerator<NodeOutput> generator = this.compiledGraph.stream(attribute,
+            AsyncGenerator<NodeOutput> generator = getGraph("default").stream(attribute,
                     RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {

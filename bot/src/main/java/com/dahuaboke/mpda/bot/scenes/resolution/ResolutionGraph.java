@@ -33,14 +33,14 @@ public class ResolutionGraph extends AbstractGraph {
     @Autowired
     private LlmNode llmNode;
 
-    public StateGraph buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
+    public Map<Object, StateGraph> buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException {
         try {
             StateGraph stateGraph = new StateGraph(keyStrategyFactory)
                     .addNode("llm", node_async(llmNode))
 
                     .addEdge(StateGraph.START, "llm")
                     .addEdge("llm", StateGraph.END);
-            return stateGraph;
+            return Map.of("default", stateGraph);
         } catch (GraphStateException e) {
             throw new MpdaGraphException(e);
         }
@@ -49,7 +49,7 @@ public class ResolutionGraph extends AbstractGraph {
     @Override
     public String execute(Map<String, Object> attribute) throws MpdaRuntimeException {
         try {
-            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
+            LlmResponse llmResponse = getGraph("default").invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
             return llmResponse.chatResponse().getResult().getOutput().getText();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
@@ -59,7 +59,7 @@ public class ResolutionGraph extends AbstractGraph {
     @Override
     public Flux<String> executeAsync(Map<String, Object> attribute) throws MpdaRuntimeException {
         try {
-            AsyncGenerator<NodeOutput> generator = this.compiledGraph.stream(attribute,
+            AsyncGenerator<NodeOutput> generator = getGraph("default").stream(attribute,
                     RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {

@@ -24,8 +24,8 @@ public class SceneWrapper {
     private final TraceManager traceManager;
     private final Chain chain;
     protected Set<SceneWrapper> childrenWrapper;
-    private AgentPrompt prompt;
-    private String description;
+    private final AgentPrompt prompt;
+    private final String description;
 
     protected SceneWrapper(Chain chain, TraceManager traceManager, AgentPrompt prompt, String description) {
         this.chain = chain;
@@ -34,12 +34,12 @@ public class SceneWrapper {
         this.description = description;
     }
 
-    public String getSceneId() {
-        return sceneId;
-    }
-
     public static Builder builder() {
         return new Builder();
+    }
+
+    public String getSceneId() {
+        return sceneId;
     }
 
     public void addChildWrapper(SceneWrapper childWrapper) {

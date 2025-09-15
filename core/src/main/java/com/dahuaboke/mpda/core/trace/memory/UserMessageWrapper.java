@@ -8,19 +8,19 @@ import java.util.Map;
 
 public class UserMessageWrapper extends AbstractMessage {
 
-    private long time;
+    private final long time;
 
     public UserMessageWrapper(String content, long time) {
         super(MessageType.USER, content, Map.of());
         this.time = time;
     }
 
-    public long getTime() {
-        return time;
-    }
-
     public static Builder builder() {
         return new Builder();
+    }
+
+    public long getTime() {
+        return time;
     }
 
     public static class Builder {
