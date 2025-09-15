@@ -23,11 +23,11 @@ public class SceneWrapper {
     private final String sceneId = UUID.randomUUID().toString();
     private final TraceManager traceManager;
     private final Chain chain;
-    private Set<SceneWrapper> childrenWrapper;
+    protected Set<SceneWrapper> childrenWrapper;
     private AgentPrompt prompt;
     private String description;
 
-    private SceneWrapper(Chain chain, TraceManager traceManager, AgentPrompt prompt, String description) {
+    protected SceneWrapper(Chain chain, TraceManager traceManager, AgentPrompt prompt, String description) {
         this.chain = chain;
         this.traceManager = traceManager;
         this.prompt = prompt;
@@ -87,6 +87,10 @@ public class SceneWrapper {
     }
 
     public SceneWrapper next(String conversationId, String query) throws MpdaException {
+        return next(conversationId, query, 0);
+    }
+
+    private SceneWrapper next(String conversationId, String query, int retry) throws MpdaException {
         String execute = execute(conversationId, query);
         if (execute.startsWith("<think>")) {
             execute = execute.replaceFirst("(?s)<think>.*?</think>", "");
@@ -96,7 +100,11 @@ public class SceneWrapper {
         if (match.isPresent()) {
             return match.get();
         }
-        throw new MpdaException(finalExecute); //TODO
+        retry++;
+        if (retry >= 3) {
+            return new UnknowWrapper();
+        }
+        return next(conversationId, query, retry);
     }
 
     public static final class Builder {

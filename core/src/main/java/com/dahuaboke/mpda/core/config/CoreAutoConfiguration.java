@@ -5,9 +5,8 @@ import com.dahuaboke.mpda.core.client.ChatClientManager;
 import com.dahuaboke.mpda.core.client.RerankerClientManager;
 import com.dahuaboke.mpda.core.rag.config.RagConfiguration;
 import com.dahuaboke.mpda.core.trace.TraceManager;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,8 +21,8 @@ public class CoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ChatClientManager chatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, TraceManager traceManager, ObjectMapper objectMapper) {
-        return new ChatClientManager(chatModel, commonPrompt, traceManager, objectMapper);
+    public ChatClientManager chatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, TraceManager traceManager, ToolCallbackProvider tools) {
+        return new ChatClientManager(chatModel, commonPrompt, traceManager, tools);
     }
 
     @Bean

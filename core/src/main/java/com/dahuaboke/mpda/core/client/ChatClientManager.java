@@ -11,7 +11,6 @@ import com.dahuaboke.mpda.core.client.entity.StreamLlmResponse;
 import com.dahuaboke.mpda.core.trace.TraceManager;
 import com.dahuaboke.mpda.core.trace.memory.ToolResponseMessageWrapper;
 import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -19,6 +18,7 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
@@ -34,13 +34,12 @@ public class ChatClientManager {
 
     private final ChatClient chatClient;
     private final TraceManager traceManager;
-    private final ObjectMapper objectMapper;
 
-    public ChatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, TraceManager traceManager, ObjectMapper objectMapper) {
+    public ChatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, TraceManager traceManager, ToolCallbackProvider tools) {
         this.traceManager = traceManager;
-        this.objectMapper = objectMapper;
         this.chatClient = ChatClient.builder(chatModel)
                 .defaultSystem(commonPrompt.system())
+                .defaultToolCallbacks(tools)
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
     }
