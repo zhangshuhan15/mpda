@@ -12,6 +12,7 @@ import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
+import com.dahuaboke.mpda.core.client.entity.StreamLlmResponse;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.node.StreamLlmNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,7 @@ public class SmallTalkGraph extends AbstractGraph {
     @Override
     public String execute(Map<String, Object> attribute) throws MpdaRuntimeException {
         try {
-            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
-            return llmResponse.chatResponse().getResult().getOutput().getText();
+            return this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, String.class).get();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
         }

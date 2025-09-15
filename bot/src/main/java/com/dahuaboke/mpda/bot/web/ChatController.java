@@ -1,5 +1,8 @@
 package com.dahuaboke.mpda.bot.web;
 
+import com.dahuaboke.mpda.bot.model.request.ChatBotRequest;
+import com.dahuaboke.mpda.bot.model.response.ChatBotResponse;
+import com.dahuaboke.mpda.bot.model.common.CommonResponse;
 import com.dahuaboke.mpda.bot.web.service.ChatService;
 import com.dahuaboke.mpda.core.agent.exception.MpdaException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,11 +26,19 @@ public class ChatController {
     @Autowired
     private ObjectMapper objectMapper;
 
+
+
+    @RequestMapping("/chat")
+    public CommonResponse<ChatBotResponse> chat(
+            @RequestBody ChatBotRequest chatBotRequest) throws MpdaException {
+        return chatService.chat(chatBotRequest);
+    }
+
     @RequestMapping("/stream")
-    public Flux<ServerSentEvent<String>> chat(
+    public Flux<ServerSentEvent<String>> chatStream(
             @RequestHeader("Conversation-Id") String conversationId,
             @RequestBody String q) throws MpdaException {
-        Flux<String> response = chatService.chat(conversationId, q);
+        Flux<String> response = chatService.chatStream(conversationId, q);
         return response.map(res -> {
             Map<String, Object> delta = Map.of("role", "assistant", "content", res);
             Map<String, Object> choice = Map.of("index", 0, "delta", delta, "finish_reason", "");
@@ -44,4 +55,5 @@ public class ChatController {
             }
         });
     }
+
 }

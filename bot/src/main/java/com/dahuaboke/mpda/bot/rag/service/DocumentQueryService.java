@@ -11,14 +11,9 @@ import com.dahuaboke.mpda.bot.rag.utils.FundClassifierUtil;
 import com.dahuaboke.mpda.bot.tools.ProductToolHandler;
 import com.dahuaboke.mpda.bot.tools.entity.YwjqrProduct;
 import com.dahuaboke.mpda.core.rag.entity.FundFieldMapper;
-import com.dahuaboke.mpda.core.rag.handler.EmbeddingHandler;
+import com.dahuaboke.mpda.core.rag.handler.EmbeddingSearchHandler;
 import com.dahuaboke.mpda.core.rag.handler.RerankHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
@@ -48,7 +43,7 @@ public class DocumentQueryService {
     private SearchHandler searchHandler;
 
     @Autowired
-    private EmbeddingHandler embeddingHandler;
+    private EmbeddingSearchHandler embeddingSearchHandler;
 
     @Autowired
     private DocContextHandler docContextHandler;
@@ -106,7 +101,7 @@ public class DocumentQueryService {
                             .productName(List.of(productName))
                             .searchRequest(searchRequest)
                             .searchHandler(searchHandler)
-                            .embeddingHandler(embeddingHandler)
+                            .embeddingHandler(embeddingSearchHandler)
                             .docContextHandler(docContextHandler)
                             .rerankHandler(rerankHandler)
                             .sortHandler(sortHandler)

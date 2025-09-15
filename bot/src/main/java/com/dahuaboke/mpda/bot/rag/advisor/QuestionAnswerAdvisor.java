@@ -19,7 +19,7 @@ package com.dahuaboke.mpda.bot.rag.advisor;
 import com.dahuaboke.mpda.bot.rag.handler.DocContextHandler;
 import com.dahuaboke.mpda.bot.rag.handler.SearchHandler;
 import com.dahuaboke.mpda.bot.rag.handler.SortHandler;
-import com.dahuaboke.mpda.core.rag.handler.EmbeddingHandler;
+import com.dahuaboke.mpda.core.rag.handler.EmbeddingSearchHandler;
 import com.dahuaboke.mpda.core.rag.handler.RerankHandler;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
@@ -97,7 +97,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 
     private final SearchHandler searchHandler;
 
-    private final EmbeddingHandler embeddingHandler;
+    private final EmbeddingSearchHandler embeddingSearchHandler;
 
     private final SortHandler sortHandler;
 
@@ -107,7 +107,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 
     public QuestionAnswerAdvisor(SearchRequest searchRequest, @Nullable PromptTemplate promptTemplate,
                                  @Nullable Scheduler scheduler, int order, List<String> productName, List<String> keys,
-                                 SearchHandler searchHandler, EmbeddingHandler embeddingHandler, SortHandler sortHandler
+                                 SearchHandler searchHandler, EmbeddingSearchHandler embeddingSearchHandler, SortHandler sortHandler
             , DocContextHandler docContextHandler, RerankHandler rerankHandler) {
         this.searchRequest = searchRequest;
         this.promptTemplate = promptTemplate != null ? promptTemplate : DEFAULT_PROMPT_TEMPLATE;
@@ -116,7 +116,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
         this.productName = productName;
         this.keys = keys;
         this.searchHandler = searchHandler;
-        this.embeddingHandler = embeddingHandler;
+        this.embeddingSearchHandler = embeddingSearchHandler;
         this.docContextHandler = docContextHandler;
         this.sortHandler = sortHandler;
         this.rerankHandler = rerankHandler;
@@ -172,7 +172,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 
         //3. 兜底向量查询
         if (documents.isEmpty() || documents.size() < topK) {
-            documents.addAll(embeddingHandler.handler(searchRequest, topK * 2));
+            documents.addAll(embeddingSearchHandler.handler(searchRequest, topK * 2));
         }
 
         //4. 查询的结果,有可能出现pdf分页情况,获取上下页防止分页场景出现
@@ -223,7 +223,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
         private RerankHandler rerankHandler;
         private DocContextHandler docContextHandler;
         private SortHandler sortHandler;
-        private EmbeddingHandler embeddingHandler;
+        private EmbeddingSearchHandler embeddingSearchHandler;
         private SearchHandler searchHandler;
         private List<String> keys;
         private List<String> productName;
@@ -247,8 +247,8 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
             return this;
         }
 
-        public Builder embeddingHandler(EmbeddingHandler embeddingHandler) {
-            this.embeddingHandler = embeddingHandler;
+        public Builder embeddingHandler(EmbeddingSearchHandler embeddingSearchHandler) {
+            this.embeddingSearchHandler = embeddingSearchHandler;
             return this;
         }
 
@@ -275,7 +275,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
         public QuestionAnswerAdvisor build() {
             QuestionAnswerAdvisor questionAnswerAdvisor = new QuestionAnswerAdvisor(
                     searchRequest, DEFAULT_PROMPT_TEMPLATE, null, 0, productName, keys,
-                    searchHandler, embeddingHandler, sortHandler, docContextHandler, rerankHandler);
+                    searchHandler, embeddingSearchHandler, sortHandler, docContextHandler, rerankHandler);
             return questionAnswerAdvisor;
         }
     }

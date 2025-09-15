@@ -1,14 +1,14 @@
 package com.dahuaboke.mpda.client;
 
+import com.dahuaboke.mpda.client.constants.RagConstant;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
- * @Desc: 新核心客户端配置类
+ * @Desc: 新核心客户端模型配置类
  * @Author：zhh
- * @Date：2025/9/5 10:37
+ * @Date：2025/9/11 10:37
  */
-@ConfigurationProperties(prefix = "yc.core.client")
+@ConfigurationProperties(prefix = RagConstant.MODEL_PREFIX)
 public class ClientProperties {
 
     // 地址

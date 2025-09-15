@@ -1,1 +1,2 @@
-com.dahuaboke.mpda.client.CoreClientAutoConfiguration
+com.dahuaboke.mpda.client.ClientEmbeddingModelAutoConfiguration
+com.dahuaboke.mpda.client.ClientVectorStoreAutoConfiguration

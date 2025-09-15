@@ -12,6 +12,8 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   ai:
+    model:
+      embedding: openai
     openai:
       base-url: http://20.200.25.216:8080
       api-key: b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881
@@ -24,7 +26,17 @@ spring:
         completionsPath: /v1/chat/completion
 
 
-
+yc:
+  core:
+    ai:
+      send-sys-no: 99370000000
+      target-sys-no: 99370000000
+      embedding:
+        enabled: false
+      vector:
+        enabled: true
+        collection-name: pdf_inner_rule_index
+        vector-field-name: embedding
 
 
 rerank:
@@ -45,3 +57,5 @@ logging:
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
   type-aliases-package: com.dahuaboke.mpda.bot.tools.entity
+
+

@@ -54,12 +54,15 @@ public class ChatClientManager {
             , OverAllState state, String nodeName, List<String> sceneMerge, Boolean isToolQuery) {
         ChatClient.ChatClientRequestSpec spec = buildChatClientRequestSpec(conversationId, sceneId, prompt, query, null, sceneMerge, isToolQuery);
         Flux<ChatResponse> chatResponseFlux = spec.stream().chatResponse();
+
+
         AsyncGenerator<? extends NodeOutput> output = StreamingChatGenerator.builder()
                 .startingNode(nodeName)
                 .startingState(state)
                 .mapResult(response -> Map.of(key
                         , Objects.requireNonNull(response.getResult().getOutput().getText())))
                 .build(chatResponseFlux);
+
         return new StreamLlmResponse(output);
     }
 
@@ -79,9 +82,11 @@ public class ChatClientManager {
         List<Message> finalMessages = new ArrayList<>(messages);
         finalMessages.add(message);
         spec.messages(finalMessages);
+        traceManager.addMemory(conversationId, sceneId, message);
         if (!CollectionUtils.isEmpty(tools)) {
             spec.toolCallbacks(tools);
         }
         return spec;
     }
+
 }

@@ -7,6 +7,16 @@ package com.dahuaboke.mpda.client.constants;
  */
 public class RagConstant {
 
+    public static final String MODEL_PREFIX = "yc.core.ai";
+
+    public static final String CHAT_MODEL = MODEL_PREFIX + ".chat";
+
+    public static final String EMBEDDING_MODEL = MODEL_PREFIX + ".embedding";
+
+    public static final String VECTOR_STORE = MODEL_PREFIX + ".vector";
+
+
+
     public static final String SUCCESS_CODE = "0000000000000000";
 
     public static final String RAG_V1_C014007 = "rag_v1_C014007";
