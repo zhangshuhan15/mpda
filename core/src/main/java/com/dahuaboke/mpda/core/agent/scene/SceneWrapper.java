@@ -82,9 +82,15 @@ public class SceneWrapper {
         return childrenWrapper == null;
     }
 
-    public Flux<String> apply(String conversationId, String query) throws MpdaException {
+
+    public String apply(String conversationId, String query) throws MpdaException {
+        return execute(conversationId, query);
+    }
+
+    public Flux<String> applyAsync(String conversationId, String query) throws MpdaException {
         return executeAsync(conversationId, query);
     }
+
 
     public SceneWrapper next(String conversationId, String query) throws MpdaException {
         String execute = execute(conversationId, query);

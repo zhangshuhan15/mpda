@@ -12,7 +12,6 @@ import com.dahuaboke.mpda.bot.scenes.product.recommendation.edge.RecommendationD
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
-import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.node.HumanNode;
 import com.dahuaboke.mpda.core.node.LlmNode;
@@ -79,8 +78,7 @@ public class RecommendationGraph extends AbstractGraph {
         attribute.put(Constants.TOOLS, List.of("recommendationTool"));
         recommendationPrompt.changePrompt("guide");
         try {
-            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
-            return llmResponse.chatResponse().getResult().getOutput().getText();
+            return this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, String.class).get();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
         }

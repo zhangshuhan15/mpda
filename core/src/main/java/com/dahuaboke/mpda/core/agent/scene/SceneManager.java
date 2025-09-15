@@ -86,7 +86,17 @@ public class SceneManager implements BeanPostProcessor {
         return wrapper;
     }
 
-    public Flux<String> apply(String conversationId, String query) throws MpdaException {
+    public String apply(String conversationId, String query) throws MpdaException {
+        SceneWrapper finalSceneWrapper = next(conversationId, query);
+        return finalSceneWrapper.apply(conversationId, query);
+    }
+
+    public Flux<String> applyAsync(String conversationId, String query) throws MpdaException {
+        SceneWrapper finalSceneWrapper = next(conversationId, query);
+        return finalSceneWrapper.applyAsync(conversationId, query);
+    }
+
+    private SceneWrapper next(String conversationId, String query) throws MpdaException {
         if (!isInit) {
             lazyInit();
         }
@@ -94,6 +104,6 @@ public class SceneManager implements BeanPostProcessor {
         while (!runtimeWrapper.isEnd()) {
             runtimeWrapper = runtimeWrapper.next(conversationId, query);
         }
-        return runtimeWrapper.apply(conversationId, query);
+        return runtimeWrapper;
     }
 }

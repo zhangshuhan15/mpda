@@ -79,8 +79,7 @@ public class ComparisonGraph extends AbstractGraph {
         attribute.put(Constants.TOOLS, List.of("comparisonTool"));
         comparisonPrompt.changePrompt("guide");
         try {
-            LlmResponse llmResponse = this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, LlmResponse.class).get();
-            return llmResponse.chatResponse().getResult().getOutput().getText();
+            return this.compiledGraph.invoke(attribute).get().value(Constants.RESULT, String.class).get();
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);
         }
