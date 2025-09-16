@@ -24,7 +24,7 @@ public class ClientRerankModelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RerankModelRequestHandle embeddingModelRequestHandle(CustomClient customClient, ClientProperties clientProperties){
+    public RerankModelRequestHandle rerankModelRequestHandle(CustomClient customClient, ClientProperties clientProperties){
         return new RerankModelRequestHandle(customClient, clientProperties);
     }
 

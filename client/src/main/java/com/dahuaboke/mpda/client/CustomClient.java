@@ -68,9 +68,11 @@ public class CustomClient {
         };
         CommonResp<R> resp = request(url, commonReq, typeReference);
         if(resp.getTxBody() == null ) {
-            log.error("txBody {} fails to send due to: {}",url,"txBody is null");
+            log.error("{} txBody is null  due to: {}:{}",url,resp.getTxHeader().getServRespCd(),resp.getTxHeader().getServRespDescInfo());
         }
-
+        if(resp.getTxBody().getTxEntity() == null){
+            log.error("{} txEntity is null  due to: {}:{}",url,resp.getTxHeader().getServRespCd(),resp.getTxHeader().getServRespDescInfo());
+        }
         return resp.getTxBody().getTxEntity();
     }
 
@@ -84,7 +86,6 @@ public class CustomClient {
                 .toEntity(typeReference);
 
         CommonResp<R> resp = commonRespResponseEntity.getBody();
-        assert resp != null;
         if (!RagConstant.SUCCESS_CODE.equals(resp.getTxHeader().getServRespCd())) {
             log.error("interface {} fails to send due to: {}",url,resp.getTxHeader().getServRespDescInfo());
         }

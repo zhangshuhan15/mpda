@@ -7,6 +7,12 @@ import com.dahuaboke.mpda.client.entity.resp.C014001Resp;
 import com.dahuaboke.mpda.client.entity.resp.C014006Resp;
 import com.dahuaboke.mpda.client.entity.resp.C014008Resp;
 import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +25,6 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.observation.AbstractObservationVectorStore;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Desc: 新核心数据库调用实现
@@ -138,13 +140,13 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         List<Document> documents;
         if (converter == null) {
             documents = resultMap.stream().map(map -> {
-                BigDecimal score = (BigDecimal) map.get("score");
+                Double score = (Double) map.get("score");
                 String id = (String) map.get("id");
                 String text = (String) map.get("text");
                 return Document.builder()
                         .id(id)
                         .text(text)
-                        .score(score.doubleValue())
+                        .score(score)
                         .metadata(map)
                         .build();
             }).collect(Collectors.toList());

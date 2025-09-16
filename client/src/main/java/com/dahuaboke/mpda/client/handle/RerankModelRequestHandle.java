@@ -37,7 +37,7 @@ public class RerankModelRequestHandle {
     public C014011Resp sendC014011(String query, List<String> docs) {
         CommonReq<C014011Req> bodyReq = new CommonReq<>();
         TxHeaderReq headerReq = CommonHeaderUtils.build(coreClientProperties.getSendSysNo(),
-                coreClientProperties.getTargetSysNo(), RagConstant.RAG_V1_C014007);
+                coreClientProperties.getTargetSysNo(), RagConstant.RAG_V1_C014011);
         bodyReq.setTxHeader(headerReq);
 
         TxBodyReq<C014011Req> txBodyReq = new TxBodyReq<>();

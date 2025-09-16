@@ -1,6 +1,8 @@
 package com.dahuaboke.mpda.bot.rag.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,5 +34,24 @@ public class FundDocUtil {
 
         mapRelation.put(fundCode, fundName);
         return mapRelation;
+    }
+
+    public static List<Map<String,String>> splitIntoBatches(Map<String,String> map, int bachSize){
+        ArrayList<Map<String,String>> batches = new ArrayList<>();
+        HashMap<String, String> currentBatch = new HashMap<>();
+        int i = 0;
+        for (Map.Entry<String,String> entry : map.entrySet()){
+            if(i >= bachSize){
+                batches.add(currentBatch);
+                currentBatch = new HashMap<>();
+                i = 0;
+            }
+            currentBatch.put(entry.getKey(), entry.getValue());
+            i++;
+        }
+        if(!currentBatch.isEmpty()){
+            batches.add(currentBatch);
+        }
+        return batches;
     }
 }

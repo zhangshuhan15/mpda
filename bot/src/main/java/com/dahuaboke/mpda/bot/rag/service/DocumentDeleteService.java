@@ -25,16 +25,15 @@ public class DocumentDeleteService {
     @Autowired
     private VectorStoreRequestHandle requestHandle;
 
-    public void doAllDel(){
-        C014005Resp c014005Resp = requestHandle.sendC014005(FundConstant.INDEX_NAME, Map.of(), Map.of());
-        List resultMap = c014005Resp.getResultMap();
-        ArrayList<FundEntity> fundEntities = new ArrayList<>();
+    public void doDel(Map<String,Object> conditonMap){
+        C014005Resp c014005Resp = requestHandle.sendC014005(FundConstant.INDEX_NAME, conditonMap, Map.of());
+        List resultMap = c014005Resp.getResultList();
+        ArrayList<String> idList = new ArrayList<>();
         for (Object obj: resultMap) {
             String jsonStr = JSONObject.toJSONString(obj);
             FundEntity fundEntity = JSONObject.parseObject(jsonStr, FundEntity.class);
-            fundEntities.add(fundEntity);
+            idList.add(fundEntity.getId());
         }
-        List<String> idList = fundEntities.stream().map(FundEntity::getId).toList();
         vectorStore.delete(idList);
     }
 }

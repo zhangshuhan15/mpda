@@ -13,10 +13,16 @@ spring:
 
   ai:
     model:
-      embedding: openai
+      embedding: yc
     openai:
       base-url: http://20.200.25.216:8080
       api-key: b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881
+      embedding:
+        embeddingsPath: "/embeddings"
+        enabled: true
+        metadata-mode: EMBED
+        options:
+          model: Bge-m3-test
       chat:
         options:
           model: Qwen25-32B-1-test
@@ -33,17 +39,17 @@ yc:
       send-sys-no: 99370000000
       target-sys-no: 99370000000
       embedding:
-        enabled: false
+        enabled: true
       vector:
         enabled: true
         collection-name: pdf_inner_rule_index
         vector-field-name: embedding
       rerank:
-        enabled: false
+        enabled: true
 
 
 rerank:
-  enabled: true
+  enabled: false
   base-url: http://20.200.25.216:8080
   api-key: b8d5ca9f6f344058ba9d8cad089ac53d97a7a3e6021242638069e67bb6b09881
   rerankPath: "/rerank"
