@@ -32,6 +32,13 @@ public class ToolNode implements NodeAction {
 
     @Override
     public Map<String, Object> apply(OverAllState state) throws Exception {
+        ChatResponse chatResponse = chatResponse(state);
+        ToolResponseMessage toolResponseMessage = executeTool(chatResponse);
+        ToolResponseMessageWrapper toolResponseMessageWrapper = buildToolResponseMessageWrapper(state, toolResponseMessage);
+        return Map.of(Constants.QUERY, toolResponseMessageWrapper, Constants.IS_TOOL_QUERY, true);
+    }
+
+    protected ChatResponse chatResponse(OverAllState state) {
         String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
         String sceneId = state.value(Constants.SCENE_ID, String.class).get();
         LlmResponse llmResponse = state.value(Constants.RESULT, LlmResponse.class).get();
@@ -40,9 +47,18 @@ public class ToolNode implements NodeAction {
         AssistantMessageWrapper assistantMessageWrapper =
                 new AssistantMessageWrapper(assistantMessage.getText(), assistantMessage.getMetadata(), assistantMessage.getToolCalls(), assistantMessage.getMedia());
         traceManager.addMemory(conversationId, sceneId, assistantMessageWrapper);
-        ToolResponseMessage toolResponseMessage = toolUtil.executeToolCalls(chatResponse);
+        return chatResponse;
+    }
+
+    protected ToolResponseMessage executeTool(ChatResponse chatResponse) {
+        return toolUtil.executeToolCalls(chatResponse);
+    }
+
+    protected ToolResponseMessageWrapper buildToolResponseMessageWrapper(OverAllState state, ToolResponseMessage toolResponseMessage) {
+        String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
+        String sceneId = state.value(Constants.SCENE_ID, String.class).get();
         ToolResponseMessageWrapper toolResponseMessageWrapper = new ToolResponseMessageWrapper(toolResponseMessage);
         traceManager.addMemory(conversationId, sceneId, toolResponseMessageWrapper);
-        return Map.of(Constants.QUERY, toolResponseMessageWrapper, Constants.IS_TOOL_QUERY, true);
+        return toolResponseMessageWrapper;
     }
 }

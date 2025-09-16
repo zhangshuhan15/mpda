@@ -16,6 +16,7 @@ import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.consts.Constants;
 import com.dahuaboke.mpda.core.node.HumanNode;
 import com.dahuaboke.mpda.core.node.LlmNode;
+import com.dahuaboke.mpda.core.node.StreamLlmNode;
 import com.dahuaboke.mpda.core.node.ToolNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,9 @@ public class CodeGenerateGraph extends AbstractGraph {
     private LlmNode llmNode;
 
     @Autowired
+    private StreamLlmNode streamLlmNode;
+
+    @Autowired
     private HumanNode humanNode;
 
     @Autowired
@@ -51,14 +55,16 @@ public class CodeGenerateGraph extends AbstractGraph {
         try {
             StateGraph stateGraph = new StateGraph(keyStrategyFactory)
                     .addNode("llm", node_async(llmNode))
+                    .addNode("streamLlmNode", node_async(streamLlmNode))
                     .addNode("human", node_async(humanNode))
                     .addNode("tool", node_async(toolNode))
 
                     .addEdge(StateGraph.START, "llm")
                     .addConditionalEdges("llm", edge_async(codeGenerateDispatcher),
                             Map.of("go_human", "human", "go_tool", "tool"))
-                    .addEdge("tool", "llm")
-                    .addEdge("human", StateGraph.END);
+                    .addEdge("tool", "streamLlmNode")
+                    .addEdge("human", StateGraph.END)
+                    .addEdge("streamLlmNode", StateGraph.END);
             return Map.of("default", stateGraph);
         } catch (GraphStateException e) {
             throw new MpdaGraphException(e);
