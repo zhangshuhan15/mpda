@@ -30,7 +30,6 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.milvus.MilvusSearchRequest;
 import org.springframework.lang.Nullable;
 import reactor.core.scheduler.Scheduler;
 
