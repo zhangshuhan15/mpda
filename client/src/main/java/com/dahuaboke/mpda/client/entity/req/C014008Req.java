@@ -17,7 +17,7 @@ public class C014008Req {
     /**
      * 系统号
      */
-    private String systemNo;
+    private String system;
 
     /**
      * 待删除的文档id
@@ -32,12 +32,12 @@ public class C014008Req {
         this.indexName = indexName;
     }
 
-    public String getSystemNo() {
-        return systemNo;
+    public String getSystem() {
+        return system;
     }
 
-    public void setSystemNo(String systemNo) {
-        this.systemNo = systemNo;
+    public void setSystem(String system) {
+        this.system = system;
     }
 
     public List<String> getIdList() {

@@ -12,14 +12,15 @@ public class C014005Resp<R> extends BaseResp {
     /**
      * 返回对象集合
      */
-    private List<R> resultMap;
+    private List<R> resultList;
 
-    public List<R> getResultMap() {
-        return resultMap;
+
+    public List<R> getResultList() {
+        return resultList;
     }
 
-    public void setResultMap(List<R> resultMap) {
-        this.resultMap = resultMap;
+    public void setResultList(List<R> resultList) {
+        this.resultList = resultList;
     }
 
 }

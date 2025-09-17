@@ -41,23 +41,24 @@ public class CustomClient {
             .build()
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
     private static final Predicate<String> SSE_DONE_PREDICATE = "[DONE]"::equals;
-    private static final Logger log = LoggerFactory.getLogger(CustomClient.class);
+
     private final RestClient restClient;
     private final WebClient webClient;
-
 
     public CustomClient(RestClient restClient, WebClient webClient) {
         this.restClient = restClient;
         this.webClient = webClient;
     }
 
-    public <T, R> CommonResp<R> execute(String url, CommonReq<T> commonReq) {
-        ParameterizedTypeReference<CommonResp<R>> typeReference = new ParameterizedTypeReference<>() {
-        };
-        return request(url, commonReq, typeReference);
+
+    private static final Logger log = LoggerFactory.getLogger(CustomClient.class);
+
+    public <T,R> CommonResp<R> execute(String url, CommonReq<T> commonReq) {
+        ParameterizedTypeReference<CommonResp<R>> typeReference = new ParameterizedTypeReference<>() { };
+        return request(url,commonReq,typeReference);
     }
 
-    public <T, R> R execute(String url, CommonReq<T> commonReq, Class<R> dataTypeClass) {
+    public <T,R> R execute(String url, CommonReq<T> commonReq, Class<R> dataTypeClass) {
         ParameterizedTypeReference<CommonResp<R>> typeReference = new ParameterizedTypeReference<>() {
             @NotNull
             @Override
@@ -66,14 +67,16 @@ public class CustomClient {
             }
         };
         CommonResp<R> resp = request(url, commonReq, typeReference);
-        if (resp.getTxBody() == null) {
-            log.error("txBody {} fails to send due to: {}", url, "txBody is null");
+        if(resp.getTxBody() == null ) {
+            log.error("{} txBody is null  due to: {}:{}",url,resp.getTxHeader().getServRespCd(),resp.getTxHeader().getServRespDescInfo());
         }
-
+        if(resp.getTxBody().getTxEntity() == null){
+            log.error("{} txEntity is null  due to: {}:{}",url,resp.getTxHeader().getServRespCd(),resp.getTxHeader().getServRespDescInfo());
+        }
         return resp.getTxBody().getTxEntity();
     }
 
-    private <T, R> CommonResp<R> request(String url, CommonReq<T> commonReq, ParameterizedTypeReference<CommonResp<R>> typeReference) {
+    private <T,R> CommonResp<R> request(String url, CommonReq<T> commonReq, ParameterizedTypeReference<CommonResp<R>> typeReference){
 
         ResponseEntity<CommonResp<R>> commonRespResponseEntity = restClient
                 .post()
@@ -83,22 +86,20 @@ public class CustomClient {
                 .toEntity(typeReference);
 
         CommonResp<R> resp = commonRespResponseEntity.getBody();
-        assert resp != null;
         if (!RagConstant.SUCCESS_CODE.equals(resp.getTxHeader().getServRespCd())) {
-            log.error("interface {} fails to send due to: {}", url, resp.getTxHeader().getServRespDescInfo());
+            log.error("interface {} fails to send due to: {}",url,resp.getTxHeader().getServRespDescInfo());
         }
         return resp;
     }
 
 
-    public <T, R> Flux<R> executeStream(String url, CommonReq<T> commonReq) {
-        TypeReference<CommonResp<R>> typeRef = new TypeReference<>() {
-        };
-        return requestStream(url, commonReq, typeRef);
+    public<T,R> Flux<R> executeStream(String url, CommonReq<T> commonReq) {
+        TypeReference<CommonResp<R>> typeRef = new TypeReference<>() {};
+        return requestStream(url,commonReq,typeRef);
     }
 
 
-    private <T, R> Flux<R> requestStream(String url, CommonReq<T> commonReq, TypeReference<CommonResp<R>> typeRef) {
+    private <T, R> Flux<R> requestStream(String url, CommonReq<T> commonReq, TypeReference<CommonResp<R>> typeRef){
 
         return this.webClient.post()
                 .uri(url)
@@ -122,6 +123,7 @@ public class CustomClient {
                 })
                 .flatMap(mono -> mono);
     }
+
 
 
 }

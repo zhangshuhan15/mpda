@@ -51,15 +51,13 @@ public class DocumentInsertService {
             log.error("文档解析失败{}", filename);
             return false;
         }
-
         KeywordEnricher keywordEnricher = new KeywordEnricher(
                 chatModel,
-                ".基于文档内容,提取5个关键字",
+                RagPrompt.DEFAULT_PROMPT_TEMPLATE
+                        .render(Map.of("keyWords", RagPrompt.FUND_KEYS)),
                 "『RESULT』",
                 "『END』"
         );
-        keywordEnricher.setPrompt(RagPrompt.DEFAULT_PROMPT_TEMPLATE
-                .render(Map.of("keyWords", RagPrompt.FUND_KEYS)));
 
         List<Document> keywordDocs = keywordEnricher.apply(docs);
         vectorStore.add(keywordDocs);
@@ -75,11 +73,11 @@ public class DocumentInsertService {
                 resources,
                 this::processPdfResource,
                 Resource::getFilename,
-                "PDF文件处理"
+                "PDF文件插入"
         );
 
         // 将失败记录写入文件
-        processingMonitor.writeFailuresToFile(result.getFailures(), "pdf_processing");
+        processingMonitor.writeFailuresToFile(result.getFailures(), "pdf_insert_processing");
     }
 
     /**

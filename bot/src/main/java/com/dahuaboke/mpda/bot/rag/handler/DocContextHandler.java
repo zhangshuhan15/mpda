@@ -39,23 +39,7 @@ public class DocContextHandler {
                     .sorted()
                     .collect(Collectors.toList());
             //获取连续段
-            ArrayList<List<Double>> continuousSegments = new ArrayList<>();
-            if (!pageNumbers.isEmpty()) {
-                ArrayList<Double> currentSegment = new ArrayList<>();
-                currentSegment.add(pageNumbers.get(0));
-                for (int i = 1; i < pageNumbers.size(); i++) {
-                    Double prev = pageNumbers.get(i - 1);
-                    Double curr = pageNumbers.get(i);
-                    if (curr - prev == 1) {
-                        currentSegment.add(curr);
-                    } else {
-                        continuousSegments.add(currentSegment);
-                        currentSegment = new ArrayList<>();
-                        currentSegment.add(curr);
-                    }
-                }
-                continuousSegments.add(currentSegment);
-            }
+            ArrayList<List<Double>> continuousSegments = getLists(pageNumbers);
             //根据连续段查询
             for (List<Double> segment : continuousSegments) {
                 Double minPage = segment.get(0);
@@ -69,6 +53,27 @@ public class DocContextHandler {
             }
         }
         return docContext;
+    }
+
+    private  ArrayList<List<Double>> getLists(List<Double> pageNumbers) {
+        ArrayList<List<Double>> continuousSegments = new ArrayList<>();
+        if (!pageNumbers.isEmpty()) {
+            ArrayList<Double> currentSegment = new ArrayList<>();
+            currentSegment.add(pageNumbers.get(0));
+            for (int i = 1; i < pageNumbers.size(); i++) {
+                Double prev = pageNumbers.get(i - 1);
+                Double curr = pageNumbers.get(i);
+                if (curr - prev == 1) {
+                    currentSegment.add(curr);
+                } else {
+                    continuousSegments.add(currentSegment);
+                    currentSegment = new ArrayList<>();
+                    currentSegment.add(curr);
+                }
+            }
+            continuousSegments.add(currentSegment);
+        }
+        return continuousSegments;
     }
 
     private List<Document> requestPage(SearchRequest searchRequest, String fileName, double pageNumber) {

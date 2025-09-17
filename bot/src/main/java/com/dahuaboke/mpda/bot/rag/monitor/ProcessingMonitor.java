@@ -71,7 +71,7 @@ public class ProcessingMonitor {
      * @param failures   失败产品映射
      * @param filePrefix 文件前缀
      */
-    public void writeFailuresToFile(Map<?, String> failures, String filePrefix) {
+    public synchronized void writeFailuresToFile(Map<?, String> failures, String filePrefix) {
         if (failures.isEmpty()) {
             return;
         }
@@ -108,7 +108,7 @@ public class ProcessingMonitor {
         }
 
         public void generateReport() {
-            log.info("\n===== {} 处理结果 =====", operationName);
+            log.info("\n======================================================= {} 处理结果 ============================================================", operationName);
             log.info("成功: {} 个产品", successItems.size());
             log.info("失败: {} 个产品", failures.size());
 

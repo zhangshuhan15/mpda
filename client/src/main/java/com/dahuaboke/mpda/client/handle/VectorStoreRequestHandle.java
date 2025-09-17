@@ -130,7 +130,7 @@ public class VectorStoreRequestHandle {
         TxBodyReq<C014008Req> txBodyReq = new TxBodyReq<>();
 
         C014008Req c014008Req = new C014008Req();
-        c014008Req.setSystemNo(coreClientProperties.getSendSysNo());
+        c014008Req.setSystem(coreClientProperties.getSendSysNo());
         c014008Req.setIndexName(indexName);
         c014008Req.setIdList(idList);
         txBodyReq.setTxEntity(c014008Req);
