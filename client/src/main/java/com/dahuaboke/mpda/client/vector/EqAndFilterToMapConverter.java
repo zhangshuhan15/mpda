@@ -28,18 +28,9 @@ public class EqAndFilterToMapConverter extends AbstractFilterExpressionConverter
     }
 
     /**
-     * 清空当前状态（用于多次使用同一个转换器实例）
-     */
-    public void reset() {
-        resultMap.clear();
-        currentKey = null;
-    }
-
-    /**
      * 转换表达式并返回Map
      */
     public Map<String, Object> convertToMap(Filter.Expression expression) {
-        reset();
         // 使用父类的convertOperand方法开始转换过程
         convertOperand(expression, new StringBuilder());
         return resultMap;

@@ -21,7 +21,7 @@ public class DocumentQueryServiceTest {
 
     @Test
     public void testProcessProduct(){
-        documentQueryService.processProducts(Map.of("000464","嘉实活期宝货币A"));
+        documentQueryService.processProducts(Map.of("001982","富国收益宝交易型货币B"));
     }
 
 

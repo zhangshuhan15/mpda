@@ -88,40 +88,37 @@ public class DocumentQueryService {
         // 处理所有查询问题
         for (Map.Entry<String, String> entry : queryMap.entrySet()) {
             String question = entry.getKey();
-            String userQuery = "基于" + productCode + "产品代码," + productName + "的" + question;
             String key = entry.getValue();
-
-            SearchRequest searchRequest = SearchRequest.builder()
-                    .topK(15)
-                    .query(userQuery)
-                    .similarityThreshold(0.25)
-                    .build();
-
-            String content = chatClient.prompt()
-                    .advisors(QuestionAnswerAdvisor
-                            .builder()
-                            .keys(List.of(key))
-                            .productName(List.of(productName))
-                            .searchRequest(searchRequest)
-                            .searchHandler(searchHandler)
-                            .embeddingHandler(embeddingSearchHandler)
-                            .docContextHandler(docContextHandler)
-                            .rerankHandler(rerankHandler)
-                            .sortHandler(sortHandler)
-                            .build())
-                    .user(userQuery)
-                    .call().content();
-
-            String answer = content.split("『RESULT』")[1].split("『END』")[0].trim();
-
-            // 单个字段设置
+            String userQuery = "基于" + productCode + "产品代码," + productName + "的" + question;
             try {
+                SearchRequest searchRequest = SearchRequest.builder()
+                        .topK(15)
+                        .query(userQuery)
+                        .similarityThreshold(0.25)
+                        .build();
+
+                String content = chatClient.prompt()
+                        .advisors(QuestionAnswerAdvisor
+                                .builder()
+                                .keys(List.of(key))
+                                .productName(List.of(productName))
+                                .searchRequest(searchRequest)
+                                .searchHandler(searchHandler)
+                                .embeddingHandler(embeddingSearchHandler)
+                                .docContextHandler(docContextHandler)
+                                .rerankHandler(rerankHandler)
+                                .sortHandler(sortHandler)
+                                .build())
+                        .user(userQuery)
+                        .call().content();
+
+                String answer = content.split("『RESULT』")[1].split("『END』")[0].trim();
+
                 mapper.setFieldByComment(fund, question, answer);
             } catch (Exception e) {
-                log.debug("实体映射失败: ", e);
+                log.error("产品{}查询失败问题为: {}",productName,userQuery, e);
                 return false;
             }
-
         }
 
         // 获取基金分类
@@ -157,7 +154,7 @@ public class DocumentQueryService {
         );
 
         // 将失败记录写入文件
-        processingMonitor.writeFailuresToFile(result.getFailures(), "product_processing");
+        processingMonitor.writeFailuresToFile(result.getFailures(), "product_query_processing");
     }
 
     private Map<String, String> initAllQuery() {
@@ -183,7 +180,6 @@ public class DocumentQueryService {
     }
 
     private String[] callModel(FundProduct fundData) {
-        log.info("基金规模是{}", FundClassifierUtil.findDouble(fundData.getNetAssetValue()));
         String content = chatClient.prompt()
                 .user("基金简称是" + fundData.getFundShortName()
                         + "，基金规模是" + FundClassifierUtil.findDouble(fundData.getNetAssetValue())
@@ -194,7 +190,6 @@ public class DocumentQueryService {
                 )
                 .call().content();
         String trim = content.split("『RESULT』")[1].split("『END』")[0].trim();
-        log.info("模型返回结果是:{}", trim);
         return trim.split("\\|\\|");
     }
 }

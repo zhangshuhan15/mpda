@@ -49,10 +49,6 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
      */
     private DocumentConverter converter;
 
-    /**
-     * 表达式转换器
-     */
-    public final EqAndFilterToMapConverter filterExpressionConverter = new EqAndFilterToMapConverter();
 
     /**
      * 新核心RAG接口处理类
@@ -124,6 +120,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
 
         float[] embedding = embeddingModel.embed(query);
         Filter.Expression filterExpression = request.getFilterExpression();
+        EqAndFilterToMapConverter filterExpressionConverter = new EqAndFilterToMapConverter();
         Map<String, Object> conditionMap = filterExpressionConverter.convertToMap(filterExpression);
 
         C014006Req c014006Req = new C014006Req();
