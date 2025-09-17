@@ -181,7 +181,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 
         //5. 根据Document ID去重
         Set<String> seenIds = new HashSet<>();
-        ArrayList<Document> uniqueDocs = new ArrayList<>();
+        List<Document> uniqueDocs = new ArrayList<>();
         Stream.of(documents, docContext)
                 .flatMap(List::stream)
                 .forEach(doc -> {
@@ -190,11 +190,13 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
                     }
                 });
 
-        //5. 重排序
-        List<Document> topDocs = rerankHandler.handler(searchRequest, uniqueDocs, topK);
+        //6. 取决于是否重排序
+        List<Document> finalDocs = uniqueDocs.size() > topK
+                ? rerankHandler.handler(searchRequest, uniqueDocs, topK)
+                : uniqueDocs;
 
-        //6. 按文件,页码整理有序,并返回
-        return sortHandler.handler(topDocs);
+        //7. 按文件,页码整理有序,并返回
+        return sortHandler.handler(finalDocs);
     }
 
     @Override
