@@ -32,14 +32,14 @@ public class ClientEmbeddingModelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EmbeddingModelRequestHandle embeddingModelRequestHandle(CustomClient customClient , ClientProperties clientProperties){
+    public EmbeddingModelRequestHandle embeddingModelRequestHandle(CustomClient customClient, ClientProperties clientProperties) {
         return new EmbeddingModelRequestHandle(customClient, clientProperties);
     }
 
 
     @Bean
     @ConditionalOnMissingBean
-    public CustomEmbeddingModel embeddingModel(EmbeddingModelRequestHandle embeddingModelRequestHandle){
+    public CustomEmbeddingModel embeddingModel(EmbeddingModelRequestHandle embeddingModelRequestHandle) {
         return new CustomEmbeddingModel(embeddingModelRequestHandle);
     }
 

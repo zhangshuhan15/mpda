@@ -1,8 +1,8 @@
-package com.dahuaboke.mpda.core.trace.memory;
+package com.dahuaboke.mpda.core.memory;
 
 import com.dahuaboke.mpda.core.agent.scene.Scene;
-import com.dahuaboke.mpda.core.consts.Constants;
-import com.dahuaboke.mpda.core.trace.TraceManager;
+import com.dahuaboke.mpda.core.context.CacheManager;
+import com.dahuaboke.mpda.core.context.consts.Constants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -21,7 +21,7 @@ import java.util.List;
 public class MemoryMergeAspect {
 
     @Autowired
-    private TraceManager traceManager;
+    private CacheManager cacheManager;
 
     @Pointcut("@annotation(com.dahuaboke.mpda.core.trace.memory.MemoryMerge)")
     public void pointcut() {
@@ -34,8 +34,8 @@ public class MemoryMergeAspect {
         MemoryMerge memoryMerge = method.getAnnotation(MemoryMerge.class);
         Class<? extends Scene>[] value = memoryMerge.value();
         if (!ArrayUtils.isEmpty(value)) {
-            List<String> sceneIds = Arrays.stream(value).map(clz -> traceManager.getSceneId(clz)).toList();
-            traceManager.getAttribute().put(Constants.SCENE_MERGE, sceneIds);
+            List<String> sceneIds = Arrays.stream(value).map(clz -> cacheManager.getSceneIdBySceneClass(clz)).toList();
+            cacheManager.getAttribute().put(Constants.SCENE_MERGE, sceneIds);
         }
     }
 }

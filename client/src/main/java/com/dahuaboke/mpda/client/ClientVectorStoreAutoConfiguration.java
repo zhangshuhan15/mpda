@@ -26,18 +26,18 @@ import org.springframework.context.annotation.Bean;
 @ConditionalOnClass({VectorStore.class, EmbeddingModel.class})
 @ConditionalOnProperty(prefix = RagConstant.VECTOR_STORE, name = "enabled", havingValue = "true")
 @ImportAutoConfiguration(ClientConfiguration.class)
-@EnableConfigurationProperties({ClientProperties.class,ClientVectorStoreProperties.class})
+@EnableConfigurationProperties({ClientProperties.class, ClientVectorStoreProperties.class})
 public class ClientVectorStoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public VectorStoreRequestHandle vectorStoreRequestHandle(CustomClient customClient , ClientProperties clientProperties){
+    public VectorStoreRequestHandle vectorStoreRequestHandle(CustomClient customClient, ClientProperties clientProperties) {
         return new VectorStoreRequestHandle(customClient, clientProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public VectorStore customVectorStore(EmbeddingModel embeddingModel, ClientVectorStoreProperties clientVectorStoreProperties,VectorStoreRequestHandle vectorStoreRequestHandle) {
+    public VectorStore customVectorStore(EmbeddingModel embeddingModel, ClientVectorStoreProperties clientVectorStoreProperties, VectorStoreRequestHandle vectorStoreRequestHandle) {
         return CustomVectorStore.builder(embeddingModel, vectorStoreRequestHandle)
                 .vectorFieldName(clientVectorStoreProperties.getVectorFieldName())
                 .collectionName(clientVectorStoreProperties.getCollectionName())

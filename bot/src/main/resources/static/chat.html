@@ -354,7 +354,8 @@
                         <v-btn absolute class="input-icon" icon="mdi-cog" size="small"
                                v-bind="activatorProps"></v-btn>
                     </template>
-                    <v-btn @click="settingStore.initDialog" icon="mdi-api" key="4" v-tooltip:end="$t('$vuetify.dataIterator.i.title')"
+                    <v-btn @click="settingStore.initDialog" icon="mdi-api" key="4"
+                           v-tooltip:end="$t('$vuetify.dataIterator.i.title')"
                            variant="elevated">
                     </v-btn>
                     <v-badge color="transparent" key="3" location='top left'>
@@ -363,7 +364,8 @@
                         </template>
                         <v-menu transition="fade-transition">
                             <template v-slot:activator="{ props }">
-                                <v-btn icon="mdi-translate" v-bind="props" v-tooltip:end="$t('$vuetify.dataIterator.l.title')"
+                                <v-btn icon="mdi-translate" v-bind="props"
+                                       v-tooltip:end="$t('$vuetify.dataIterator.l.title')"
                                        variant="elevated">
                                 </v-btn>
                             </template>
@@ -379,22 +381,27 @@
                             </v-list>
                         </v-menu>
                     </v-badge>
-                    <v-btn @click="settingStore.agentDialog = true" icon="mdi-account-supervisor" v-tooltip:end="$t('$vuetify.dataIterator.a.title')"
+                    <v-btn @click="settingStore.agentDialog = true" icon="mdi-account-supervisor"
+                           v-tooltip:end="$t('$vuetify.dataIterator.a.title')"
                            variant="elevated">
                     </v-btn>
                     <v-btn @click="resourceStore.resourceDialog = true" icon="mdi-database"
-                           v-if="mcpStore.getServers" v-tooltip:end="$t('$vuetify.dataIterator.r.title')" variant="elevated">
+                           v-if="mcpStore.getServers" v-tooltip:end="$t('$vuetify.dataIterator.r.title')"
+                           variant="elevated">
                     </v-btn>
                     <v-badge :content="historyStore.conversation.length" color="info" key="1" location='top left'
                              max="99">
-                        <v-btn @click="settingStore.configHistory = true" icon="mdi-list-box" v-tooltip:end="$t('$vuetify.dataIterator.q.title')"
+                        <v-btn @click="settingStore.configHistory = true" icon="mdi-list-box"
+                               v-tooltip:end="$t('$vuetify.dataIterator.q.title')"
                                variant="elevated">
                         </v-btn>
                     </v-badge>
                 </v-speed-dial>
                 <v-container>
                     <v-row>
-                        <v-textarea :label="" :rows="settingStore.inputRow" @blur="settingStore.setInputRow(1,150)" @focus="settingStore.setInputRow(2,0)" @keydown="messageStore.handleKeydown" auto-grow
+                        <v-textarea :label="" :rows="settingStore.inputRow" @blur="settingStore.setInputRow(1,150)"
+                                    @focus="settingStore.setInputRow(2,0)" @keydown="messageStore.handleKeydown"
+                                    auto-grow
                                     class="input-box" clearable color="primary"
                                     counter dirty
                                     max-rows="15"
@@ -404,7 +411,8 @@
                                     <v-row>
                                         <v-img :src="messageStore.base64" @click="messageStore.images=[]"
                                                class="chat-images mt-1" v-if="messageStore.base64"></v-img>
-                                        <v-file-input @click.stop accept="image/*" hide-input prepend-icon="mdi-plus-circle-outline"
+                                        <v-file-input @click.stop accept="image/*" hide-input
+                                                      prepend-icon="mdi-plus-circle-outline"
                                                       v-else
                                                       v-model="messageStore.images"></v-file-input>
                                     </v-row>
@@ -433,7 +441,9 @@
                                v-tooltip:start="$t('$vuetify.dataIterator.g.new')" variant="elevated">
                         </v-btn>
                     </v-speed-dial>
-                    <v-btn :color="mcpStore.getServers ? 'primary': 'grey'" @click="mcpStore.getServers ? promptStore.promptDialog = true : false" icon="mdi-account-edit" size="small"
+                    <v-btn :color="mcpStore.getServers ? 'primary': 'grey'"
+                           @click="mcpStore.getServers ? promptStore.promptDialog = true : false"
+                           icon="mdi-account-edit" size="small"
                            v-else
                            variant="elevated">
                     </v-btn>
@@ -472,7 +482,8 @@
                                 <v-divider></v-divider>
                                 <v-card-item>
                                     <template v-slot:prepend>
-                                        <v-btn :color="historyStore.getColor(index)" @click="historyStore.select(index)" class="mr-3" icon
+                                        <v-btn :color="historyStore.getColor(index)" @click="historyStore.select(index)"
+                                               class="mr-3" icon
                                                size="small">
                                             <b>{{item.raw.history.length}}</b>
                                         </v-btn>
@@ -486,7 +497,8 @@
                                         item.raw.history[item.raw.history.length-1]?.content || "NA" }}
                                     </v-card-subtitle>
                                     <template v-slot:append>
-                                        <v-btn @click="historyStore.downloadById(index)" color="primary" icon="mdi-download"
+                                        <v-btn @click="historyStore.downloadById(index)" color="primary"
+                                               icon="mdi-download"
                                                variant="text"></v-btn>
                                         <v-btn @click="historyStore.deleteById(index)" icon="mdi-delete-outline"
                                                variant="text"></v-btn>
@@ -513,7 +525,9 @@
                     <!-- ---------------------------------------------- -->
                     <!-- APIKEY -->
                     <!-- ---------------------------------------------- -->
-                    <v-text-field :append-inner-icon="settingStore.apiKeyShow ? 'mdi-eye-off' : 'mdi-eye'" :label="$t('$vuetify.dataIterator.i.apikey')" :type="settingStore.apiKeyShow ? 'text' : 'password'"
+                    <v-text-field :append-inner-icon="settingStore.apiKeyShow ? 'mdi-eye-off' : 'mdi-eye'"
+                                  :label="$t('$vuetify.dataIterator.i.apikey')"
+                                  :type="settingStore.apiKeyShow ? 'text' : 'password'"
                                   @click:append-inner="settingStore.apiKeyShow = !settingStore.apiKeyShow"
                                   class="px-2 mb-4" clearable
                                   color="primary" density='compact'
@@ -558,7 +572,8 @@
                                 <!-- ---------------------------------------------- -->
                                 <!-- Model -->
                                 <!-- ---------------------------------------------- -->
-                                <v-combobox :items="defaultChoiceStore.model" :label="$t('$vuetify.dataIterator.i.model')"
+                                <v-combobox :items="defaultChoiceStore.model"
+                                            :label="$t('$vuetify.dataIterator.i.model')"
                                             class="px-2"
                                             density='compact'
                                             v-model="chatbotStore.model" variant="outlined">
@@ -606,7 +621,8 @@
                             <v-expansion-panel-text>
                                 <v-row class="px-3 mt-2 mr-2">
 
-                                    <v-combobox :items="defaultChoiceStore.reasoning_efforts" :label="$t('$vuetify.dataIterator.i.reasoning')"
+                                    <v-combobox :items="defaultChoiceStore.reasoning_efforts"
+                                                :label="$t('$vuetify.dataIterator.i.reasoning')"
                                                 class="px-2"
                                                 clearable density='compact'
                                                 v-model="chatbotStore.reasoning_effort" variant="outlined">
@@ -622,7 +638,8 @@
                                     </v-checkbox>
                                 </v-row>
                                 <v-row class="px-3 mt-4 mb-0">
-                                    <v-combobox :items="defaultChoiceStore.max_tokens_type" :label="$t('$vuetify.dataIterator.i.maxTokensPrefix')"
+                                    <v-combobox :items="defaultChoiceStore.max_tokens_type"
+                                                :label="$t('$vuetify.dataIterator.i.maxTokensPrefix')"
                                                 class="px-2"
                                                 density='compact'
                                                 v-model="chatbotStore.max_tokens_type" variant="outlined">
@@ -633,13 +650,15 @@
                                     </v-combobox>
                                 </v-row>
                                 <v-row class="px-3 mt-0 mb-0">
-                                    <v-combobox :items="defaultChoiceStore.temperature" :label="$t('$vuetify.dataIterator.i.temperature')"
+                                    <v-combobox :items="defaultChoiceStore.temperature"
+                                                :label="$t('$vuetify.dataIterator.i.temperature')"
                                                 :rules="[value => !isNaN(value) && parseFloat(value) >= 0 && parseFloat(value) <= 2]"
                                                 class="px-2" density='compact'
                                                 type='number' v-model="chatbotStore.temperature"
                                                 variant="outlined">
                                     </v-combobox>
-                                    <v-combobox :label="$t('$vuetify.dataIterator.i.topP')" :rules="[value => !isNaN(value) && parseFloat(value) >= 0 && parseFloat(value) <= 1]"
+                                    <v-combobox :label="$t('$vuetify.dataIterator.i.topP')"
+                                                :rules="[value => !isNaN(value) && parseFloat(value) >= 0 && parseFloat(value) <= 1]"
                                                 class="px-2" density='compact'
                                                 type='number' v-model="chatbotStore.top_p"
                                                 variant="outlined">
@@ -649,7 +668,8 @@
                                             density='compact'
                                             v-model="chatbotStore.contentType" variant="outlined">
                                 </v-combobox>
-                                <v-combobox :items="defaultChoiceStore.authPrefix" :label="$t('$vuetify.dataIterator.i.authPrefix')"
+                                <v-combobox :items="defaultChoiceStore.authPrefix"
+                                            :label="$t('$vuetify.dataIterator.i.authPrefix')"
                                             class="px-2"
                                             density='compact' v-model="chatbotStore.authPrefix"
                                             variant="outlined">
@@ -660,7 +680,8 @@
 
                     <!-- Dialog Btn -->
                     <v-card-actions>
-                        <v-file-input :label="$t('$vuetify.dataIterator.i.configFile')" accept="application/json" class="mr-2"
+                        <v-file-input :label="$t('$vuetify.dataIterator.i.configFile')" accept="application/json"
+                                      class="mr-2"
                                       prepend-icon="" prepend-inner-icon="mdi-upload"
                                       single-line v-model="configFile"
                                       variant="outlined"></v-file-input>
@@ -673,7 +694,8 @@
         </v-dialog>
         <v-dialog class="dialog-card" v-model="promptStore.promptDialog">
             <v-card :title="$t('$vuetify.dataIterator.p.title')" prepend-icon="mdi-account-cog">
-                <v-data-iterator :items="promptStore.promptList" :loading="promptStore.loading" :search="promptStore.search"
+                <v-data-iterator :items="promptStore.promptList" :loading="promptStore.loading"
+                                 :search="promptStore.search"
                                  @update:options="promptStore.loadPrompts" items-per-page="-1">
                     <template v-slot:header>
                         <v-toolbar class="px-2">
@@ -691,7 +713,8 @@
                                     <v-card border flat>
                                         <v-card-item :subtitle="item.raw.name" :title="item.raw.title" class="mb-2">
                                             <template v-slot:append>
-                                                <v-btn @click="promptStore.select(item.raw)" border flat icon="mdi-lead-pencil" size="small"
+                                                <v-btn @click="promptStore.select(item.raw)" border flat
+                                                       icon="mdi-lead-pencil" size="small"
                                                        text="Read">
                                                 </v-btn>
                                             </template>
@@ -716,7 +739,8 @@
                         <br>
                         <v-textarea :label="argument.name" auto-grow
                                     class="mx-2" color="primary" rows="1" type="text"
-                                    v-for="argument in promptStore.promptSelect.arguments" v-model="argument.content" variant="outlined">
+                                    v-for="argument in promptStore.promptSelect.arguments" v-model="argument.content"
+                                    variant="outlined">
                     </div>
                     </v-textarea>
                     <v-card-actions>
@@ -739,7 +763,8 @@
                 <v-card-text>
                     <v-tabs-window v-model="resourceStore.tab">
                         <v-tabs-window-item :value="item.name" v-for="item in mcpStore.listServerResources()">
-                            <v-data-iterator :items="resourceStore.resourceTemplatesList" :loading="resourceStore.loadingTemplates"
+                            <v-data-iterator :items="resourceStore.resourceTemplatesList"
+                                             :loading="resourceStore.loadingTemplates"
                                              @update:options="resourceStore.loadTemplates(item.templatesList)"
                                              items-per-page="-1">
                                 <template v-slot:default="{ items }">
@@ -759,7 +784,8 @@
                                     </v-container>
                                 </template>
                             </v-data-iterator>
-                            <v-data-iterator :items="resourceStore.resourceList" :loading="resourceStore.loadingResources"
+                            <v-data-iterator :items="resourceStore.resourceList"
+                                             :loading="resourceStore.loadingResources"
                                              @update:options="resourceStore.loadResources(item.list)"
                                              items-per-page="-1">
                                 <template v-slot:default="{ items }">
@@ -797,14 +823,16 @@
                                 <h5 class="font-weight-bold">{{ column.key }}</h5>
                                 <v-spacer></v-spacer>
                                 <!-- add new card button -->
-                                <v-btn @click="column.isAddVisible = !column.isAddVisible" color="primary" icon="mdi-plus" rounded size="small"
+                                <v-btn @click="column.isAddVisible = !column.isAddVisible" color="primary"
+                                       icon="mdi-plus" rounded size="small"
                                        variant="text">
                                 </v-btn>
                             </div>
 
                             <!-- add new card form -->
                             <v-card class="pa-5 mb-4" v-show="column.isAddVisible">
-                                <v-text-field @keyup.enter="agentStore.addCard(column)" @keyup.esc="column.isAddVisible = false" autofocus
+                                <v-text-field @keyup.enter="agentStore.addCard(column)"
+                                              @keyup.esc="column.isAddVisible = false" autofocus
                                               color="primary" hideDetails label="Title"
                                               v-model="column.addTitle"
                                               variant="underlined"></v-text-field>
@@ -827,7 +855,8 @@
                                     <v-card @click="agentStore.editCard(element)" class="pa-4 mb-4">
                                         <div class="d-flex align-start font-weight-bold text-title">
                                             <span class="flex-fill">{{ element.title }}</span>
-                                            <v-btn @click.stop="agentStore.deleteCard(column, index)" class="my-n2 mr-n2" color="primary" icon="mdi-delete-outline"
+                                            <v-btn @click.stop="agentStore.deleteCard(column, index)"
+                                                   class="my-n2 mr-n2" color="primary" icon="mdi-delete-outline"
                                                    rounded size="small"
                                                    variant="text"></v-btn>
                                         </div>
@@ -841,7 +870,8 @@
                         <v-col>
                             <h5 class="font-weight-bold mb-4">MCP</h5>
                             <v-divider></v-divider>
-                            <v-data-table-server :items="mcpStore.serverTools" :loading="mcpStore.loading" @update:options="mcpStore.loadTools" disable-sort
+                            <v-data-table-server :items="mcpStore.serverTools" :loading="mcpStore.loading"
+                                                 @update:options="mcpStore.loadTools" disable-sort
                                                  hide-default-footer hide-default-header
                                                  hide-no-data
                                                  v-if="mcpStore.getServers"></v-data-table-server>
@@ -921,13 +951,15 @@
                                 <div :key="index" v-for="(item, index) in group.message.content">
                                     <tuui-img-dialog :src="item.image_url.url"
                                                      v-if="item.type=='image_url'"></tuui-img-dialog>
-                                    <v-textarea :counter="showmodify" :hide-details="!showmodify" :readonly="!showmodify"
+                                    <v-textarea :counter="showmodify" :hide-details="!showmodify"
+                                                :readonly="!showmodify"
                                                 auto-grow class="conversation-area" density='compact' rows="1"
                                                 v-model="item.text" variant="plain"></v-textarea>
                                 </div>
                             </v-card-text>
                             <v-card-text class="md-preview pt-1" v-else>
-                                <v-textarea :counter="showmodify" :hide-details="!showmodify" :readonly="!showmodify" auto-grow
+                                <v-textarea :counter="showmodify" :hide-details="!showmodify" :readonly="!showmodify"
+                                            auto-grow
                                             class="conversation-area" density='compact' rows="1"
                                             v-model="group.message.content" variant="plain"></v-textarea>
                             </v-card-text>
@@ -945,16 +977,19 @@
                         <template v-slot:default="{ showcontent }">
                             <v-card-text class="md-preview pt-1" v-if="group.message.reasoning_content">
                                 <v-textarea auto-grow class="conversation-area text-disabled font-italic"
-                                            density='compact' hide-details readonly rows="1" v-model="group.message.reasoning_content"
+                                            density='compact' hide-details readonly rows="1"
+                                            v-model="group.message.reasoning_content"
                                             variant="plain"></v-textarea>
                             </v-card-text>
                             <v-card-text class="md-preview pt-1" v-if="showcontent">
                                 <v-textarea auto-grow class="conversation-area" density='compact' hide-details
-                                            readonly rows="1" v-model="group.message.content" variant="plain"></v-textarea>
+                                            readonly rows="1" v-model="group.message.content"
+                                            variant="plain"></v-textarea>
                             </v-card-text>
                             <v-card-text class="md-preview px-4 py-3" v-else>
                                 <md-preview :code-foldable="true"
-                                            :language="language == 'zhHans' ? 'zh-CN' : 'en-US'" :model-value="group.message.content"
+                                            :language="language == 'zhHans' ? 'zh-CN' : 'en-US'"
+                                            :model-value="group.message.content"
                                             auto-fold-threshold="Infinity"></md-preview>
                             </v-card-text>
                         </template>
@@ -1047,18 +1082,22 @@
                     <div v-if="isHovering">
                         <v-divider></v-divider>
                         <v-card-actions>
-                            <v-btn @click="copyToClipboard(messages[index])" color="primary" icon="mdi-content-copy" size="x-small"
+                            <v-btn @click="copyToClipboard(messages[index])" color="primary" icon="mdi-content-copy"
+                                   size="x-small"
                                    v-if="showCopy" variant="plain"></v-btn>
-                            <v-btn :icon=" showmodify ? 'mdi-check-bold' : 'mdi-lead-pencil'" @click="showmodify = !showmodify"
+                            <v-btn :icon=" showmodify ? 'mdi-check-bold' : 'mdi-lead-pencil'"
+                                   @click="showmodify = !showmodify"
                                    color="primary" size="x-small"
                                    v-bind="showmodify" v-if="showModify" variant="plain"></v-btn>
-                            <v-btn :icon=" showcontent ? 'mdi-eye-remove' : 'mdi-eye'" @click="showcontent = !showcontent"
+                            <v-btn :icon=" showcontent ? 'mdi-eye-remove' : 'mdi-eye'"
+                                   @click="showcontent = !showcontent"
                                    color="primary" size="x-small" v-bind="showcontent"
                                    v-if="showContent" variant="plain"></v-btn>
                             <v-spacer></v-spacer>
                             <v-btn @click="messages.splice(0, index)" color="error" icon="mdi-format-align-top"
                                    size="x-small" v-if="showReduce && index > 0" variant="plain"></v-btn>
-                            <v-btn @click="messages.splice(index, range)" color="error" icon="mdi-delete-off-outline" size="x-small"
+                            <v-btn @click="messages.splice(index, range)" color="error" icon="mdi-delete-off-outline"
+                                   size="x-small"
                                    v-if="showDelete" variant="plain"></v-btn>
                         </v-card-actions>
                     </div>

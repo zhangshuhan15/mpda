@@ -19,7 +19,6 @@ public class RagConstant {
     public static final String VECTOR_STORE = MODEL_PREFIX + ".vector";
 
 
-
     public static final String SUCCESS_CODE = "0000000000000000";
 
     public static final String RAG_V1_C014007 = "rag_v1_C014007";

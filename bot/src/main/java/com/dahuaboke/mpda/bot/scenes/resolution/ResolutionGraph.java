@@ -12,7 +12,7 @@ import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
-import com.dahuaboke.mpda.core.consts.Constants;
+import com.dahuaboke.mpda.core.context.consts.Constants;
 import com.dahuaboke.mpda.core.node.LlmNode;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class ResolutionGraph extends AbstractGraph {
     public Flux<String> executeAsync(Map<String, Object> attribute) throws MpdaRuntimeException {
         try {
             AsyncGenerator<NodeOutput> generator = getGraph("default").stream(attribute,
-                    RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
+                    RunnableConfig.builder().threadId(cacheManager.getContext().getSceneId()).build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);

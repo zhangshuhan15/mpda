@@ -48,7 +48,7 @@ public class DocumentInsertService {
         try {
             docs = pdfDocumentConvert.readToDocuments(resource);
         } catch (IOException e) {
-            log.error("文档解析失败{}",filename);
+            log.error("文档解析失败{}", filename);
             return false;
         }
 

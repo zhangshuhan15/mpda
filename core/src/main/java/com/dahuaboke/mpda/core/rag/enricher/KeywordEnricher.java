@@ -17,9 +17,9 @@ public class KeywordEnricher implements DocumentTransformer {
 
     public static final String EXCERPT_KEYWORDS_METADATA_KEY = "excerpt_keywords";
     private final ChatModel chatModel;
-    private String keyWordTemplate;
     private final String prefix;
     private final String suffix;
+    private String keyWordTemplate;
 
     public KeywordEnricher(ChatModel chatModel, String keyWordTemplate, String prefix, String suffix) {
         this.chatModel = chatModel;

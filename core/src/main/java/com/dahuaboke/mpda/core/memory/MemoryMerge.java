@@ -1,4 +1,4 @@
-package com.dahuaboke.mpda.core.trace.memory;
+package com.dahuaboke.mpda.core.memory;
 
 import com.dahuaboke.mpda.core.agent.scene.Scene;
 

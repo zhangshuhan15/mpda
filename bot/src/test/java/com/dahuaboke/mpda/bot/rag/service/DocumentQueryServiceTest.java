@@ -21,7 +21,7 @@ public class DocumentQueryServiceTest {
     private DocumentQueryService documentQueryService;
 
     @Test
-    public void testProcessProduct(){
-        documentQueryService.processProducts(Map.of("aaa","0130234"));
+    public void testProcessProduct() {
+        documentQueryService.processProducts(Map.of("aaa", "0130234"));
     }
 }

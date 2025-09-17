@@ -1,9 +1,9 @@
 package com.dahuaboke.mpda.bot.web.service;
 
-import com.dahuaboke.mpda.bot.model.request.ChatBotRequest;
-import com.dahuaboke.mpda.bot.model.response.ChatBotResponse;
 import com.dahuaboke.mpda.bot.model.common.CommonResponse;
 import com.dahuaboke.mpda.bot.model.common.ResponseCode;
+import com.dahuaboke.mpda.bot.model.request.ChatBotRequest;
+import com.dahuaboke.mpda.bot.model.response.ChatBotResponse;
 import com.dahuaboke.mpda.core.agent.exception.MpdaException;
 import com.dahuaboke.mpda.core.agent.scene.SceneManager;
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +20,9 @@ import reactor.core.publisher.Flux;
 @Service
 public class ChatService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
     @Autowired
     private SceneManager sceneManager;
-
-    private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
     public CommonResponse<ChatBotResponse> chat(ChatBotRequest chatBotRequest) throws MpdaException {
         try {
@@ -50,7 +49,7 @@ public class ChatService {
 
         } catch (IllegalArgumentException e) {
             return CommonResponse.error(ResponseCode.PARAM_FORMAT_ERROR, e.getMessage());
-        }  catch (Exception e) {
+        } catch (Exception e) {
             logger.error("处理聊天请求时发生错误", e);
             return CommonResponse.error(ResponseCode.INTERNAL_ERROR);
         }

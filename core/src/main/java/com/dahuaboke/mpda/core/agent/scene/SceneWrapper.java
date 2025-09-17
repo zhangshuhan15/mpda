@@ -3,8 +3,7 @@ package com.dahuaboke.mpda.core.agent.scene;
 import com.dahuaboke.mpda.core.agent.chain.Chain;
 import com.dahuaboke.mpda.core.agent.exception.MpdaException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
-import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
-import com.dahuaboke.mpda.core.trace.TraceManager;
+import com.dahuaboke.mpda.core.context.CoreContext;
 import org.apache.commons.collections4.CollectionUtils;
 import reactor.core.publisher.Flux;
 
@@ -21,25 +20,29 @@ import java.util.stream.Collectors;
 public class SceneWrapper {
 
     private final String sceneId = UUID.randomUUID().toString();
-    private final TraceManager traceManager;
     private final Chain chain;
+    private final Scene scene;
     protected Set<SceneWrapper> childrenWrapper;
-    private final AgentPrompt prompt;
-    private final String description;
 
-    protected SceneWrapper(Chain chain, TraceManager traceManager, AgentPrompt prompt, String description) {
+    protected SceneWrapper(Chain chain, Scene scene) {
         this.chain = chain;
-        this.traceManager = traceManager;
-        this.prompt = prompt;
-        this.description = description;
+        this.scene = scene;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
+    public String getDescription() {
+        return scene.description();
+    }
+
     public String getSceneId() {
         return sceneId;
+    }
+
+    public Class<? extends Scene> getSceneClass() {
+        return scene.getClass();
     }
 
     public void addChildWrapper(SceneWrapper childWrapper) {
@@ -50,59 +53,45 @@ public class SceneWrapper {
     }
 
     public void init() throws MpdaGraphException {
-        if (CollectionUtils.isNotEmpty(childrenWrapper)) {
-            prompt.build(childrenWrapper.stream().collect(Collectors.toMap(child -> child.sceneId, child -> child.description)));
+        if (CollectionUtils.isNotEmpty(childrenWrapper) && scene != null && scene.prompt() != null) {
+            scene.prompt().build(childrenWrapper.stream().collect(Collectors.toMap(child -> {
+                if (child != null) {
+                    return child.getSceneId();
+                }
+                return "";
+            }, child -> {
+                if (child != null) {
+                    return child.getDescription();
+                }
+                return "";
+            })));
         }
         this.chain.init();
-    }
-
-    private String execute(String conversationId, String query) throws MpdaException {
-        try {
-            traceManager.setConversationId(conversationId);
-            traceManager.setSceneId(this.sceneId);
-            return chain.slide(query);
-        } finally {
-            traceManager.clearConversationId();
-            traceManager.clearSceneId();
-        }
-    }
-
-    private Flux<String> executeAsync(String conversationId, String query) throws MpdaException {
-        try {
-            traceManager.setConversationId(conversationId);
-            traceManager.setSceneId(this.sceneId);
-            return chain.slideAsync(query);
-        } finally {
-            traceManager.clearConversationId();
-            traceManager.clearSceneId();
-        }
     }
 
     public boolean isEnd() {
         return childrenWrapper == null;
     }
 
-
-    public String apply(String conversationId, String query) throws MpdaException {
-        return execute(conversationId, query);
+    public String apply(CoreContext context) throws MpdaException {
+        return chain.slide(context);
     }
 
-    public Flux<String> applyAsync(String conversationId, String query) throws MpdaException {
-        return executeAsync(conversationId, query);
+    public Flux<String> applyAsync(CoreContext context) throws MpdaException {
+        return chain.slideAsync(context);
     }
 
-
-    public SceneWrapper next(String conversationId, String query) throws MpdaException {
-        return next(conversationId, query, 0);
+    public SceneWrapper next(CoreContext context) throws MpdaException {
+        return next(context, 0);
     }
 
-    private SceneWrapper next(String conversationId, String query, int retry) throws MpdaException {
-        String execute = execute(conversationId, query);
+    private SceneWrapper next(CoreContext context, int retry) throws MpdaException {
+        String execute = apply(context);
         if (execute.startsWith("<think>")) {
             execute = execute.replaceFirst("(?s)<think>.*?</think>", "");
         }
         String finalExecute = execute.trim();
-        Optional<SceneWrapper> match = childrenWrapper.stream().filter(child -> child.sceneId.equals(finalExecute)).findFirst();
+        Optional<SceneWrapper> match = childrenWrapper.stream().filter(child -> child.getSceneId().equals(finalExecute)).findFirst();
         if (match.isPresent()) {
             return match.get();
         }
@@ -110,15 +99,13 @@ public class SceneWrapper {
         if (retry >= 3) {
             return new UnknowWrapper();
         }
-        return next(conversationId, query, retry);
+        return next(context, retry);
     }
 
     public static final class Builder {
 
         private Chain chain;
-        private TraceManager traceManager;
-        private AgentPrompt prompt;
-        private String description;
+        private Scene scene;
 
         private Builder() {
         }
@@ -128,23 +115,13 @@ public class SceneWrapper {
             return this;
         }
 
-        public Builder traceManager(TraceManager traceManager) {
-            this.traceManager = traceManager;
-            return this;
-        }
-
-        public Builder prompt(AgentPrompt prompt) {
-            this.prompt = prompt;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
+        public Builder scene(Scene scene) {
+            this.scene = scene;
             return this;
         }
 
         public SceneWrapper build() {
-            return new SceneWrapper(chain, traceManager, prompt, description);
+            return new SceneWrapper(chain, scene);
         }
     }
 }

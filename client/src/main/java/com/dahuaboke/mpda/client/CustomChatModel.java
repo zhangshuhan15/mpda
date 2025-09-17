@@ -72,7 +72,7 @@ public class CustomChatModel implements ChatModel {
                         this.observationRegistry)
                 .observe(() -> {
 
-                    CommonResp execute = customClient.execute("",null);
+                    CommonResp execute = customClient.execute("", null);
 
                     if (execute == null) {
                         logger.warn("No chat completion returned for prompt: {}", prompt);
@@ -99,7 +99,7 @@ public class CustomChatModel implements ChatModel {
     public Flux<ChatResponse> internalStream(Prompt prompt, ChatResponse previousChatResponse) {
         return Flux.deferContextual(contextView -> {
 
-            Flux<CommonResp> executeFlux = customClient.executeStream("",null);
+            Flux<CommonResp> executeFlux = customClient.executeStream("", null);
 
             // For chunked responses, only the first chunk contains the choice role.
             // The rest of the chunks with same ID share the same role.

@@ -11,7 +11,7 @@ import com.alibaba.cloud.ai.graph.exception.GraphStateException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
-import com.dahuaboke.mpda.core.consts.Constants;
+import com.dahuaboke.mpda.core.context.consts.Constants;
 import com.dahuaboke.mpda.core.node.StreamLlmNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -57,7 +57,7 @@ public class SmallTalkGraph extends AbstractGraph {
     public Flux<String> executeAsync(Map<String, Object> attribute) throws MpdaRuntimeException {
         try {
             AsyncGenerator<NodeOutput> generator = getGraph("default").stream(attribute,
-                    RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
+                    RunnableConfig.builder().threadId(cacheManager.getContext().getSceneId()).build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);

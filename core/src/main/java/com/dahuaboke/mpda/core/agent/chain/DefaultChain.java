@@ -4,7 +4,7 @@ package com.dahuaboke.mpda.core.agent.chain;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
-import com.dahuaboke.mpda.core.trace.TraceManager;
+import com.dahuaboke.mpda.core.context.CacheManager;
 import reactor.core.publisher.Flux;
 
 /**
@@ -13,8 +13,8 @@ import reactor.core.publisher.Flux;
  */
 public class DefaultChain extends AbstractChain {
 
-    private DefaultChain(Graph graph, AgentPrompt agentPrompt, TraceManager traceManager) {
-        super(graph, agentPrompt, traceManager);
+    private DefaultChain(Graph graph, AgentPrompt agentPrompt, CacheManager cacheManager) {
+        super(graph, agentPrompt, cacheManager);
     }
 
     public static Builder builder() {
@@ -35,7 +35,7 @@ public class DefaultChain extends AbstractChain {
 
         private Graph graph;
         private AgentPrompt agentPrompt;
-        private TraceManager traceManager;
+        private CacheManager cacheManager;
 
         private Builder() {
         }
@@ -50,13 +50,13 @@ public class DefaultChain extends AbstractChain {
             return this;
         }
 
-        public Builder traceManager(TraceManager traceManager) {
-            this.traceManager = traceManager;
+        public Builder cacheManager(CacheManager cacheManager) {
+            this.cacheManager = cacheManager;
             return this;
         }
 
         public DefaultChain build() {
-            return new DefaultChain(graph, agentPrompt, traceManager);
+            return new DefaultChain(graph, agentPrompt, cacheManager);
         }
     }
 }

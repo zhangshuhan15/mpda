@@ -22,14 +22,6 @@ public enum ResponseCode {
         this.msg = msg;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
     // 根据code查找枚举
     public static ResponseCode getByCode(String code) {
         for (ResponseCode responseCode : values()) {
@@ -38,5 +30,13 @@ public enum ResponseCode {
             }
         }
         return INTERNAL_ERROR;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 }

@@ -12,19 +12,19 @@ public class TxBodyResp<R> {
      */
     private R txEntity;
 
+    public TxBodyResp(R txEntity) {
+        this.txEntity = txEntity;
+    }
+
+    public TxBodyResp() {
+    }
+
     public R getTxEntity() {
         return txEntity;
     }
 
     public void setTxEntity(R txEntity) {
         this.txEntity = txEntity;
-    }
-
-    public TxBodyResp(R txEntity) {
-        this.txEntity = txEntity;
-    }
-
-    public TxBodyResp() {
     }
 
 }

@@ -2,6 +2,7 @@ package com.dahuaboke.mpda.core.agent.scene;
 
 
 import com.dahuaboke.mpda.core.agent.exception.MpdaException;
+import com.dahuaboke.mpda.core.context.CoreContext;
 import reactor.core.publisher.Flux;
 
 /**
@@ -15,11 +16,11 @@ public class UnknowWrapper extends SceneWrapper {
             """;
 
     public UnknowWrapper() {
-        super(null, null, null, null);
+        super(null, null);
     }
 
     @Override
-    public Flux<String> applyAsync(String conversationId, String query) throws MpdaException {
+    public Flux<String> applyAsync(CoreContext context) throws MpdaException {
         return Flux.just(reply);
     }
 }

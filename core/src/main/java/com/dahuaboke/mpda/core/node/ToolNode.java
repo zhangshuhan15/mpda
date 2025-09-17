@@ -5,10 +5,10 @@ import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
 import com.dahuaboke.mpda.core.agent.tools.ToolUtil;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
-import com.dahuaboke.mpda.core.consts.Constants;
-import com.dahuaboke.mpda.core.trace.TraceManager;
-import com.dahuaboke.mpda.core.trace.memory.AssistantMessageWrapper;
-import com.dahuaboke.mpda.core.trace.memory.ToolResponseMessageWrapper;
+import com.dahuaboke.mpda.core.context.consts.Constants;
+import com.dahuaboke.mpda.core.memory.AssistantMessageWrapper;
+import com.dahuaboke.mpda.core.memory.MemoryManager;
+import com.dahuaboke.mpda.core.memory.ToolResponseMessageWrapper;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -28,7 +28,7 @@ public class ToolNode implements NodeAction {
     private ToolUtil toolUtil;
 
     @Autowired
-    private TraceManager traceManager;
+    private MemoryManager memoryManager;
 
     @Override
     public Map<String, Object> apply(OverAllState state) throws Exception {
@@ -46,7 +46,7 @@ public class ToolNode implements NodeAction {
         AssistantMessage assistantMessage = chatResponse.getResult().getOutput();
         AssistantMessageWrapper assistantMessageWrapper =
                 new AssistantMessageWrapper(assistantMessage.getText(), assistantMessage.getMetadata(), assistantMessage.getToolCalls(), assistantMessage.getMedia());
-        traceManager.addMemory(conversationId, sceneId, assistantMessageWrapper);
+        memoryManager.addMemory(conversationId, sceneId, assistantMessageWrapper);
         return chatResponse;
     }
 
@@ -58,7 +58,7 @@ public class ToolNode implements NodeAction {
         String conversationId = state.value(Constants.CONVERSATION_ID, String.class).get();
         String sceneId = state.value(Constants.SCENE_ID, String.class).get();
         ToolResponseMessageWrapper toolResponseMessageWrapper = new ToolResponseMessageWrapper(toolResponseMessage);
-        traceManager.addMemory(conversationId, sceneId, toolResponseMessageWrapper);
+        memoryManager.addMemory(conversationId, sceneId, toolResponseMessageWrapper);
         return toolResponseMessageWrapper;
     }
 }

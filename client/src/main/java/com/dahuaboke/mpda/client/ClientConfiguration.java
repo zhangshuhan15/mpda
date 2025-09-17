@@ -21,7 +21,7 @@ public class ClientConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CustomClient customClient(){
+    public CustomClient customClient() {
         Consumer<HttpHeaders> finalHeaders = (h) -> {
             h.setContentType(MediaType.APPLICATION_JSON);
         };

@@ -40,7 +40,6 @@ public class EqAndFilterToMapConverterTest {
     }
 
 
-
     @Test
     public void testEqAnd() {
         Filter.Expression expression = new Filter.Expression(
@@ -78,6 +77,6 @@ public class EqAndFilterToMapConverterTest {
 
         System.out.println("转换结果: " + result);
     }
-    
-    
+
+
 }

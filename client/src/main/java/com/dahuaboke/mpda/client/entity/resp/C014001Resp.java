@@ -1,6 +1,5 @@
 package com.dahuaboke.mpda.client.entity.resp;
 
-import com.dahuaboke.mpda.client.entity.resp.BaseResp;
 import java.util.List;
 import java.util.Map;
 

@@ -5,10 +5,11 @@ import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.Graph;
 import com.dahuaboke.mpda.core.agent.prompt.AgentPrompt;
-import com.dahuaboke.mpda.core.consts.Constants;
-import com.dahuaboke.mpda.core.trace.TraceManager;
-import com.dahuaboke.mpda.core.trace.memory.AssistantMessageWrapper;
-import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
+import com.dahuaboke.mpda.core.context.CacheManager;
+import com.dahuaboke.mpda.core.context.CoreContext;
+import com.dahuaboke.mpda.core.context.consts.Constants;
+import com.dahuaboke.mpda.core.memory.AssistantMessageWrapper;
+import com.dahuaboke.mpda.core.memory.UserMessageWrapper;
 import reactor.core.publisher.Flux;
 
 import java.util.HashMap;
@@ -22,13 +23,13 @@ public abstract class AbstractChain implements Chain {
 
     protected final Graph graph;
     protected final AgentPrompt agentPrompt;
-    protected final TraceManager traceManager;
+    protected final CacheManager cacheManager;
     protected Map<String, Object> attribute;
 
-    public AbstractChain(Graph graph, AgentPrompt agentPrompt, TraceManager traceManager) {
+    public AbstractChain(Graph graph, AgentPrompt agentPrompt, CacheManager cacheManager) {
         this.graph = graph;
         this.agentPrompt = agentPrompt;
-        this.traceManager = traceManager;
+        this.cacheManager = cacheManager;
         attribute = new HashMap<>() {{
             put(Constants.PROMPT, null);
             put(Constants.QUERY, null);
@@ -44,20 +45,20 @@ public abstract class AbstractChain implements Chain {
     }
 
     @Override
-    public String slide(String query) throws MpdaRuntimeException {
-        prepare(query);
-        graph.addMemory(UserMessageWrapper.builder().text(query).build());
+    public String slide(CoreContext context) throws MpdaRuntimeException {
+        prepare(context);
+        graph.addMemory(UserMessageWrapper.builder().text(context.getQuery()).build());
         String reply = executeGraph();
         graph.addMemory(new AssistantMessageWrapper(reply));
         return reply;
     }
 
     @Override
-    public Flux<String> slideAsync(String query) throws MpdaRuntimeException {
-        String conversationId = traceManager.getConversationId();
-        String sceneId = traceManager.getSceneId();
-        prepare(query);
-        graph.addMemory(UserMessageWrapper.builder().text(query).build());
+    public Flux<String> slideAsync(CoreContext context) throws MpdaRuntimeException {
+        String conversationId = context.getConversationId();
+        String sceneId = context.getSceneId();
+        prepare(context);
+        graph.addMemory(UserMessageWrapper.builder().text(context.getQuery()).build());
         Flux<String> reply = executeGraphAsync();
         StringBuilder replyMessage = new StringBuilder();
         reply.subscribe(replyTemp -> replyMessage.append(replyTemp)
@@ -72,12 +73,12 @@ public abstract class AbstractChain implements Chain {
 
     abstract public Flux<String> executeGraphAsync() throws MpdaRuntimeException;
 
-    private void prepare(String query) {
+    private void prepare(CoreContext context) {
         attribute.remove(Constants.TOOLS);
         attribute.put(Constants.PROMPT, agentPrompt.description());
-        attribute.put(Constants.QUERY, query);
-        attribute.put(Constants.CONVERSATION_ID, traceManager.getConversationId());
-        attribute.put(Constants.SCENE_ID, traceManager.getSceneId());
-        traceManager.setAttribute(attribute);
+        attribute.put(Constants.QUERY, context.getQuery());
+        attribute.put(Constants.CONVERSATION_ID, context.getConversationId());
+        attribute.put(Constants.SCENE_ID, context.getSceneId());
+        cacheManager.setAttribute(attribute);
     }
 }

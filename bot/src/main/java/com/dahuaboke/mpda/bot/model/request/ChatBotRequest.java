@@ -9,7 +9,7 @@ public class ChatBotRequest {
 
     private String query;
 
-    private Map<String,Object> metadata;
+    private Map<String, Object> metadata;
 
     public String getConversationId() {
         return conversationId;

@@ -14,12 +14,12 @@ import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
 import com.dahuaboke.mpda.core.agent.graph.AbstractGraph;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
-import com.dahuaboke.mpda.core.consts.Constants;
+import com.dahuaboke.mpda.core.context.consts.Constants;
+import com.dahuaboke.mpda.core.memory.MemoryMerge;
 import com.dahuaboke.mpda.core.node.HumanNode;
 import com.dahuaboke.mpda.core.node.LlmNode;
 import com.dahuaboke.mpda.core.node.StreamLlmNode;
 import com.dahuaboke.mpda.core.node.ToolNode;
-import com.dahuaboke.mpda.core.trace.memory.MemoryMerge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -96,7 +96,7 @@ public class InformationGraph extends AbstractGraph {
         informationPrompt.changePrompt("guide");
         try {
             AsyncGenerator<NodeOutput> generator = getGraph("default").stream(attribute,
-                    RunnableConfig.builder().threadId(traceManager.getSceneId()).build());
+                    RunnableConfig.builder().threadId(cacheManager.getContext().getSceneId()).build());
             return changeFlux(generator);
         } catch (GraphRunnerException e) {
             throw new MpdaRuntimeException(e);

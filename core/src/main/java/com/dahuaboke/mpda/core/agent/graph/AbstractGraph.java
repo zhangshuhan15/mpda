@@ -9,7 +9,8 @@ import com.alibaba.cloud.ai.graph.streaming.StreamingOutput;
 import com.dahuaboke.mpda.core.agent.exception.MpdaGraphException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaIllegalArgumentException;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
-import com.dahuaboke.mpda.core.trace.TraceManager;
+import com.dahuaboke.mpda.core.context.CacheManager;
+import com.dahuaboke.mpda.core.memory.MemoryManager;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
@@ -27,9 +28,11 @@ import java.util.concurrent.CompletionException;
  */
 public abstract class AbstractGraph implements Graph {
 
-    @Autowired
-    protected TraceManager traceManager;
     private final Map<Object, CompiledGraph> graphs = new HashMap<>();
+    @Autowired
+    protected CacheManager cacheManager;
+    @Autowired
+    protected MemoryManager memoryManager;
 
     @Override
     public void init(Set<String> keys) throws MpdaGraphException {
@@ -54,12 +57,12 @@ public abstract class AbstractGraph implements Graph {
 
     @Override
     public void addMemory(Message message) {
-        traceManager.addMemory(message);
+        memoryManager.addMemory(message);
     }
 
     @Override
     public void addMemory(String conversationId, String sceneId, Message message) {
-        traceManager.addMemory(conversationId, sceneId, message);
+        memoryManager.addMemory(conversationId, sceneId, message);
     }
 
     abstract public Map<Object, StateGraph> buildGraph(KeyStrategyFactory keyStrategyFactory) throws MpdaGraphException;

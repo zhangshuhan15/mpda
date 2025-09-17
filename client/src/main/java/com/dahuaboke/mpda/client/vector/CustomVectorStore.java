@@ -31,34 +31,27 @@ import java.util.stream.Collectors;
  */
 public class CustomVectorStore extends AbstractObservationVectorStore {
 
-    /**
-     * 索引名(表名)
-     */
-    private String collectionName = "vector_store";
-
-
-    /**
-     * 需要向量查询的字段
-     */
-    private String vectorFieldName = "embedding";
-
-    /**
-     * 转换实体对象
-     */
-    private DocumentConverter converter;
-
+    private static final Logger logger = LoggerFactory.getLogger(CustomVectorStore.class);
     /**
      * 表达式转换器
      */
     public final EqAndFilterToMapConverter filterExpressionConverter = new EqAndFilterToMapConverter();
-
     /**
      * 新核心RAG接口处理类
      */
     private final VectorStoreRequestHandle vectorStoreRequestHandle;
-
-
-    private static final Logger logger = LoggerFactory.getLogger(CustomVectorStore.class);
+    /**
+     * 索引名(表名)
+     */
+    private String collectionName = "vector_store";
+    /**
+     * 需要向量查询的字段
+     */
+    private String vectorFieldName = "embedding";
+    /**
+     * 转换实体对象
+     */
+    private DocumentConverter converter;
 
     public CustomVectorStore(Builder builder) {
         super(builder);
@@ -66,6 +59,10 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         this.converter = builder.converter;
         this.vectorFieldName = builder.vectorFieldName;
         this.vectorStoreRequestHandle = builder.vectorStoreRequestHandle;
+    }
+
+    public static Builder builder(EmbeddingModel embeddingModel, VectorStoreRequestHandle vectorStoreRequestHandle) {
+        return new Builder(embeddingModel, vectorStoreRequestHandle);
     }
 
     @Override
@@ -90,16 +87,16 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
         }
     }
 
-    private ArrayList<HashMap<String,Object>> getInsertBatchEntity(List<Document> documents, List<float[]> embeddings) {
-        ArrayList<HashMap<String,Object>> entities = new ArrayList<>();
+    private ArrayList<HashMap<String, Object>> getInsertBatchEntity(List<Document> documents, List<float[]> embeddings) {
+        ArrayList<HashMap<String, Object>> entities = new ArrayList<>();
         for (int i = 0; i < documents.size(); i++) {
             Document document = documents.get(i);
             Map<String, Object> metadata = document.getMetadata();
             HashMap<String, Object> entity = new HashMap<>(metadata);
             String text = document.getText();
-            entity.put("text",text);
+            entity.put("text", text);
             float[] embedding = embeddings.get(i);
-            entity.put("embedding",embedding);
+            entity.put("embedding", embedding);
             entities.add(entity);
         }
         return entities;
@@ -109,7 +106,7 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
     public void doDelete(@NotNull List<String> idList) {
         C014008Resp c014008Resp = vectorStoreRequestHandle.sendC014008(collectionName, idList);
         if (!c014008Resp.getFailedDelIdList().isEmpty()) {
-            logger.error("fail Ids is{}",c014008Resp.getFailedDelIdList());
+            logger.error("fail Ids is{}", c014008Resp.getFailedDelIdList());
         }
     }
 
@@ -152,23 +149,16 @@ public class CustomVectorStore extends AbstractObservationVectorStore {
             documents = converter.resultConvert(resultMap);
         }
         return documents.stream().filter(document -> {
-            Double score =  document.getScore();
+            Double score = document.getScore();
             return score >= similarityThreshold;
         }).collect(Collectors.toList());
 
     }
 
-
-    
-
     @NotNull
     @Override
     public VectorStoreObservationContext.Builder createObservationContextBuilder(@NotNull String operationName) {
         return VectorStoreObservationContext.builder(VectorStoreProvider.ELASTICSEARCH.value(), operationName).collectionName(this.collectionName).dimensions(this.embeddingModel.dimensions());
-    }
-
-    public static Builder builder(EmbeddingModel embeddingModel, VectorStoreRequestHandle vectorStoreRequestHandle) {
-        return new Builder(embeddingModel, vectorStoreRequestHandle);
     }
 
     public static class Builder extends AbstractVectorStoreBuilder<CustomVectorStore.Builder> {

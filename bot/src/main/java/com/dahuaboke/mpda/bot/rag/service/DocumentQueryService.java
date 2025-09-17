@@ -71,7 +71,7 @@ public class DocumentQueryService {
     /**
      * 处理单个产品
      */
-    private boolean processProduct(Map.Entry<String, String> productEntry)  {
+    private boolean processProduct(Map.Entry<String, String> productEntry) {
         // 初始化查询
         Map<String, String> queryMap = initAllQuery();
 
@@ -161,7 +161,7 @@ public class DocumentQueryService {
         return fundFieldMapper.getQuestionKeyWordMap();
     }
 
-    private void writeDb(FundProduct data)  {
+    private void writeDb(FundProduct data) {
         YwjqrProduct ywjqrProduct = objectMapper.convertValue(data, YwjqrProduct.class);
         productToolHandler.fundProduct(ywjqrProduct);
     }

@@ -10,9 +10,10 @@ import com.dahuaboke.mpda.client.entity.TxHeaderReq;
 public class CommonHeaderUtils {
     /**
      * 构建通用报文头
-     * @param sendSysNo 发送方系统号
+     *
+     * @param sendSysNo   发送方系统号
      * @param targetSysNo 接收方系统号
-     * @param servNo 接口服务号（如RAG_V1_C014007）
+     * @param servNo      接口服务号（如RAG_V1_C014007）
      * @return 构建好的TxHeaderReq
      */
     public static TxHeaderReq build(String sendSysNo, String targetSysNo, String servNo) {

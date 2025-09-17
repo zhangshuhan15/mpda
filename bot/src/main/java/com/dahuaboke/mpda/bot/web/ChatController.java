@@ -1,8 +1,8 @@
 package com.dahuaboke.mpda.bot.web;
 
+import com.dahuaboke.mpda.bot.model.common.CommonResponse;
 import com.dahuaboke.mpda.bot.model.request.ChatBotRequest;
 import com.dahuaboke.mpda.bot.model.response.ChatBotResponse;
-import com.dahuaboke.mpda.bot.model.common.CommonResponse;
 import com.dahuaboke.mpda.bot.web.service.ChatService;
 import com.dahuaboke.mpda.core.agent.exception.MpdaException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +25,6 @@ public class ChatController {
 
     @Autowired
     private ObjectMapper objectMapper;
-
 
 
     @RequestMapping("/chat")

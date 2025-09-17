@@ -5,7 +5,7 @@ import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
 import com.dahuaboke.mpda.core.agent.tools.ToolManager;
 import com.dahuaboke.mpda.core.client.ChatClientManager;
-import com.dahuaboke.mpda.core.consts.Constants;
+import com.dahuaboke.mpda.core.context.consts.Constants;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

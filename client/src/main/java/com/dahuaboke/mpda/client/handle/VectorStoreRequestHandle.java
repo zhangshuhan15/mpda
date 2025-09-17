@@ -63,12 +63,13 @@ public class VectorStoreRequestHandle {
 
     /**
      * 通用数据普通查询接口发送
-     * @param indexName 索引名称
-     * @param conditionMap 筛选条件 非必输
+     *
+     * @param indexName      索引名称
+     * @param conditionMap   筛选条件 非必输
      * @param orderCondition 排序字段 非必输
      * @return
      */
-    public C014005Resp sendC014005(String indexName, Map<String,Object> conditionMap, Map<String,String> orderCondition) {
+    public C014005Resp sendC014005(String indexName, Map<String, Object> conditionMap, Map<String, String> orderCondition) {
         CommonReq<C014005Req> bodyReq = new CommonReq<>();
         TxHeaderReq headerReq = CommonHeaderUtils.build(coreClientProperties.getSendSysNo(),
                 coreClientProperties.getTargetSysNo(), RagConstant.RAG_V1_C014005);

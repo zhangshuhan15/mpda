@@ -8,9 +8,9 @@ import com.alibaba.cloud.ai.graph.streaming.StreamingChatGenerator;
 import com.dahuaboke.mpda.core.agent.prompt.CommonAgentPrompt;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
 import com.dahuaboke.mpda.core.client.entity.StreamLlmResponse;
-import com.dahuaboke.mpda.core.trace.TraceManager;
-import com.dahuaboke.mpda.core.trace.memory.ToolResponseMessageWrapper;
-import com.dahuaboke.mpda.core.trace.memory.UserMessageWrapper;
+import com.dahuaboke.mpda.core.memory.MemoryManager;
+import com.dahuaboke.mpda.core.memory.ToolResponseMessageWrapper;
+import com.dahuaboke.mpda.core.memory.UserMessageWrapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -33,10 +33,10 @@ import java.util.Objects;
 public class ChatClientManager {
 
     private final ChatClient chatClient;
-    private final TraceManager traceManager;
+    private final MemoryManager memoryManager;
 
-    public ChatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, TraceManager traceManager, ToolCallbackProvider tools) {
-        this.traceManager = traceManager;
+    public ChatClientManager(ChatModel chatModel, CommonAgentPrompt commonPrompt, MemoryManager memoryManager, ToolCallbackProvider tools) {
+        this.memoryManager = memoryManager;
         this.chatClient = ChatClient.builder(chatModel)
                 .defaultSystem(commonPrompt.system())
                 .defaultToolCallbacks(tools)
@@ -69,7 +69,7 @@ public class ChatClientManager {
     private ChatClient.ChatClientRequestSpec buildChatClientRequestSpec(String conversationId, String sceneId, String prompt
             , Object query, List<ToolCallback> tools, List<String> sceneMerge, Boolean isToolQuery) {
         ChatClient.ChatClientRequestSpec spec = chatClient.prompt(prompt);
-        List<Message> messages = traceManager.getMemory(conversationId, sceneId, sceneMerge);
+        List<Message> messages = memoryManager.getMemory(conversationId, sceneId, sceneMerge);
         if (CollectionUtils.isEmpty(messages)) {
             messages = List.of();
         }
@@ -78,7 +78,7 @@ public class ChatClientManager {
             message = (ToolResponseMessageWrapper) query;
         } else {
             message = UserMessageWrapper.builder().text((String) query).build();
-            traceManager.addMemory(conversationId, sceneId, message);
+            memoryManager.addMemory(conversationId, sceneId, message);
         }
         List<Message> finalMessages = new ArrayList<>(messages);
         finalMessages.add(message);

@@ -4,7 +4,7 @@ package com.dahuaboke.mpda.core.node;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.NodeAction;
 import com.dahuaboke.mpda.core.client.ChatClientManager;
-import com.dahuaboke.mpda.core.consts.Constants;
+import com.dahuaboke.mpda.core.context.consts.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

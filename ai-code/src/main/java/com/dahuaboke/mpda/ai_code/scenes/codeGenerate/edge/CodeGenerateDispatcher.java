@@ -4,7 +4,7 @@ package com.dahuaboke.mpda.ai_code.scenes.codeGenerate.edge;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.action.EdgeAction;
 import com.dahuaboke.mpda.core.client.entity.LlmResponse;
-import com.dahuaboke.mpda.core.consts.Constants;
+import com.dahuaboke.mpda.core.context.consts.Constants;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
 

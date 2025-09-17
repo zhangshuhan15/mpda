@@ -5,12 +5,13 @@ import com.dahuaboke.mpda.bot.rag.client.FundEntity;
 import com.dahuaboke.mpda.bot.rag.constants.FundConstant;
 import com.dahuaboke.mpda.client.entity.resp.C014005Resp;
 import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Desc: 文档删除服务
@@ -25,11 +26,11 @@ public class DocumentDeleteService {
     @Autowired
     private VectorStoreRequestHandle requestHandle;
 
-    public void doAllDel(){
+    public void doAllDel() {
         C014005Resp c014005Resp = requestHandle.sendC014005(FundConstant.INDEX_NAME, Map.of(), Map.of());
         List resultMap = c014005Resp.getResultMap();
         ArrayList<FundEntity> fundEntities = new ArrayList<>();
-        for (Object obj: resultMap) {
+        for (Object obj : resultMap) {
             String jsonStr = JSONObject.toJSONString(obj);
             FundEntity fundEntity = JSONObject.parseObject(jsonStr, FundEntity.class);
             fundEntities.add(fundEntity);

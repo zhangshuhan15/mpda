@@ -3,8 +3,8 @@ package com.dahuaboke.mpda.core.node;
 
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.dahuaboke.mpda.core.agent.exception.MpdaRuntimeException;
-import com.dahuaboke.mpda.core.consts.Constants;
-import com.dahuaboke.mpda.core.trace.memory.ToolResponseMessageWrapper;
+import com.dahuaboke.mpda.core.context.consts.Constants;
+import com.dahuaboke.mpda.core.memory.ToolResponseMessageWrapper;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.model.ChatResponse;

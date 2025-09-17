@@ -1,8 +1,8 @@
 package com.dahuaboke.mpda.bot.rag.client;
 
 import com.dahuaboke.mpda.bot.rag.constants.FundConstant;
-import com.dahuaboke.mpda.client.vector.CustomVectorStore;
 import com.dahuaboke.mpda.client.handle.VectorStoreRequestHandle;
+import com.dahuaboke.mpda.client.vector.CustomVectorStore;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -29,7 +29,7 @@ public class VectorStoreConfig {
     }
 
     @Bean
-    ChatClient chatClient(ChatClient.Builder builder)  {
+    ChatClient chatClient(ChatClient.Builder builder) {
         return builder
 
                 .defaultAdvisors(

@@ -51,11 +51,6 @@ public class CodeGenerateTool extends AbstractBaseTool<CodeGenerateTool.Input> {
         }
     }
 
-    public record Input(
-            @JsonPropertyDescription("文件路径（包含文件名称，根路径使用C:/Users/dahua/Desktop/new）") String path
-            , @JsonPropertyDescription("文件内容") String content) {
-    }
-
     public boolean createFileIfNotExists(String filePath) {
         if (filePath == null || filePath.trim().isEmpty()) {
             return false;
@@ -85,5 +80,10 @@ public class CodeGenerateTool extends AbstractBaseTool<CodeGenerateTool.Input> {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public record Input(
+            @JsonPropertyDescription("文件路径（包含文件名称，根路径使用C:/Users/dahua/Desktop/new/1）") String path
+            , @JsonPropertyDescription("文件内容") String content) {
     }
 }
