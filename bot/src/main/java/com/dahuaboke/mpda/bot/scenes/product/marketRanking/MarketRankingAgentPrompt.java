@@ -21,7 +21,7 @@ public class MarketRankingAgentPrompt extends AbstractProductAgentPrompt {
                         """
                 , "tool", """
                             输出结尾需要添加以下内容：
-                                对话框内为您展示前十名产品详情，全市场排名情况您可以在Excel文件中查看。如需其他指标，您可以直接告诉邮小金。
+                                对话框内为您展示前十名产品详情，全市场排名情况您可以在Excel文件中查看。如需其他指标，您可以直接告诉邮小盈。
                                 Excel链接：https://www.psbc.com/excel
                             用md格式返回。
                         """);
